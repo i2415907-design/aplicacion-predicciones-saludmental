@@ -68,34 +68,34 @@ async function obtenerContextoBD() {
 
   // === CRUCES CLAVE: ESCALAS × FACTORES ===
   const depresionxFactor = await q<{ factor: string; nivel: string; cantidad: bigint }>(
-    `SELECT 'drogas' as factor, p.nivel_gravedad as nivel, COUNT(*) as cantidad FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE s.consume_drogas=1 GROUP BY p.nivel_gravedad
+    `SELECT 'drogas' as factor, p.nivel_gravedad as nivel, COUNT(*) as cantidad FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE s.consume_drogas = TRUE GROUP BY p.nivel_gravedad
     UNION ALL
     SELECT 'alcohol_frecuente', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE s.frecuencia_alcohol IN ('frecuente','diario') GROUP BY p.nivel_gravedad
     UNION ALL
-    SELECT 'tabaco', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE s.consume_tabaco=1 GROUP BY p.nivel_gravedad
+    SELECT 'tabaco', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE s.consume_tabaco = TRUE GROUP BY p.nivel_gravedad
     UNION ALL
-    SELECT 'violencia', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE f.violencia_fisica=1 OR f.violencia_psicologica=1 GROUP BY p.nivel_gravedad
+    SELECT 'violencia', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE f.violencia_fisica = TRUE OR f.violencia_psicologica = TRUE GROUP BY p.nivel_gravedad
     UNION ALL
-    SELECT 'desempleo', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE f.desempleo_reciente=1 GROUP BY p.nivel_gravedad
+    SELECT 'desempleo', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE f.desempleo_reciente = TRUE GROUP BY p.nivel_gravedad
     UNION ALL
-    SELECT 'sin_apoyo', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE f.tiene_red_apoyo=0 GROUP BY p.nivel_gravedad`)
+    SELECT 'sin_apoyo', p.nivel_gravedad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN phq9_respuestas p ON p.encuesta_id=e.id WHERE f.tiene_red_apoyo = FALSE GROUP BY p.nivel_gravedad`)
 
   const ideacionxFactor = await q<{ factor: string; nivel: string; cantidad: bigint }>(
-    `SELECT 'drogas' as factor, c.nivel_severidad as nivel, COUNT(*) as cantidad FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE s.consume_drogas=1 GROUP BY c.nivel_severidad
+    `SELECT 'drogas' as factor, c.nivel_severidad as nivel, COUNT(*) as cantidad FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE s.consume_drogas = TRUE GROUP BY c.nivel_severidad
     UNION ALL
     SELECT 'alcohol_frecuente', c.nivel_severidad, COUNT(*) FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE s.frecuencia_alcohol IN ('frecuente','diario') GROUP BY c.nivel_severidad
     UNION ALL
-    SELECT 'violencia', c.nivel_severidad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE f.violencia_fisica=1 OR f.violencia_psicologica=1 GROUP BY c.nivel_severidad
+    SELECT 'violencia', c.nivel_severidad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE f.violencia_fisica = TRUE OR f.violencia_psicologica = TRUE GROUP BY c.nivel_severidad
     UNION ALL
-    SELECT 'sin_apoyo', c.nivel_severidad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE f.tiene_red_apoyo=0 GROUP BY c.nivel_severidad
+    SELECT 'sin_apoyo', c.nivel_severidad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE f.tiene_red_apoyo = FALSE GROUP BY c.nivel_severidad
     UNION ALL
-    SELECT 'abuso_sexual', c.nivel_severidad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE f.abuso_sexual=1 GROUP BY c.nivel_severidad`)
+    SELECT 'abuso_sexual', c.nivel_severidad, COUNT(*) FROM encuestas e JOIN factores_psicologicos f ON f.encuesta_id=e.id JOIN cssrs_respuestas c ON c.encuesta_id=e.id WHERE f.abuso_sexual = TRUE GROUP BY c.nivel_severidad`)
 
   // === CONSUMO SUSTANCIAS ===
   const consumoDrogas = await q<{ sexo: string; consume: string; cantidad: bigint }>(
-    `SELECT e.sexo, CASE WHEN s.consume_drogas=1 THEN 'si' ELSE 'no' END as consume, COUNT(*) as cantidad FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id GROUP BY e.sexo, s.consume_drogas`)
+    `SELECT e.sexo, CASE WHEN s.consume_drogas = TRUE THEN 'si' ELSE 'no' END as consume, COUNT(*) as cantidad FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id GROUP BY e.sexo, s.consume_drogas`)
   const tipoDrogas = await q<{ tipo: string; cantidad: bigint }>(
-    `SELECT s.tipo_drogas as tipo, COUNT(*) as cantidad FROM salud_fisica s WHERE s.consume_drogas=1 AND s.tipo_drogas IS NOT NULL GROUP BY s.tipo_drogas`)
+    `SELECT s.tipo_drogas as tipo, COUNT(*) as cantidad FROM salud_fisica s WHERE s.consume_drogas = TRUE AND s.tipo_drogas IS NOT NULL GROUP BY s.tipo_drogas`)
   const consumoAlcohol = await q<{ sexo: string; frecuencia: string; cantidad: bigint }>(
     `SELECT e.sexo, s.frecuencia_alcohol as frecuencia, COUNT(*) as cantidad FROM encuestas e JOIN salud_fisica s ON s.encuesta_id=e.id GROUP BY e.sexo, s.frecuencia_alcohol`)
   const consumoTabaco = await q<{ sexo: string; frecuencia: string; cantidad: bigint }>(
@@ -103,27 +103,27 @@ async function obtenerContextoBD() {
 
   // === SALUD FÍSICA ===
   const saludFisica = await q<{ campo: string; valor: string; cantidad: bigint }>(
-    `SELECT 'enfermedad_cronica' as campo, CASE WHEN enfermedad_cronica=1 THEN 'si' ELSE 'no' END as valor, COUNT(*) as cantidad FROM salud_fisica GROUP BY enfermedad_cronica
-    UNION ALL SELECT 'dolor_cronico', CASE WHEN dolor_cronico=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM salud_fisica GROUP BY dolor_cronico
-    UNION ALL SELECT 'tratamiento_medico', CASE WHEN tratamiento_medico_actual=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM salud_fisica GROUP BY tratamiento_medico_actual
-    UNION ALL SELECT 'insomnio', CASE WHEN insomnio=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM salud_fisica GROUP BY insomnio`)
+    `SELECT 'enfermedad_cronica' as campo, CASE WHEN enfermedad_cronica = TRUE THEN 'si' ELSE 'no' END as valor, COUNT(*) as cantidad FROM salud_fisica GROUP BY enfermedad_cronica
+    UNION ALL SELECT 'dolor_cronico', CASE WHEN dolor_cronico = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM salud_fisica GROUP BY dolor_cronico
+    UNION ALL SELECT 'tratamiento_medico', CASE WHEN tratamiento_medico_actual = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM salud_fisica GROUP BY tratamiento_medico_actual
+    UNION ALL SELECT 'insomnio', CASE WHEN insomnio = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM salud_fisica GROUP BY insomnio`)
 
   const calidadSueno = await q<{ nivel: string; cantidad: bigint }>(
     `SELECT CASE WHEN calidad_sueno<=2 THEN 'mala' WHEN calidad_sueno<=3 THEN 'regular' ELSE 'buena' END as nivel, COUNT(*) as cantidad FROM salud_fisica GROUP BY nivel`)
 
   // === FACTORES PSICOLÓGICOS ===
   const factoresPsicologicos = await q<{ campo: string; valor: string; cantidad: bigint }>(
-    `SELECT 'perdida_familiar', CASE WHEN perdida_familiar_reciente=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY perdida_familiar_reciente
-    UNION ALL SELECT 'violencia_fisica', CASE WHEN violencia_fisica=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY violencia_fisica
-    UNION ALL SELECT 'violencia_psicologica', CASE WHEN violencia_psicologica=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY violencia_psicologica
-    UNION ALL SELECT 'abuso_sexual', CASE WHEN abuso_sexual=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY abuso_sexual
-    UNION ALL SELECT 'bullying', CASE WHEN bullying=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY bullying
-    UNION ALL SELECT 'desempleo', CASE WHEN desempleo_reciente=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY desempleo_reciente
-    UNION ALL SELECT 'ruptura_pareja', CASE WHEN rupture_pareja_reciente=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY rupture_pareja_reciente
-    UNION ALL SELECT 'problema_legal', CASE WHEN problema_legal_reciente=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY problema_legal_reciente
-    UNION ALL SELECT 'tiene_red_apoyo', CASE WHEN tiene_red_apoyo=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY tiene_red_apoyo
-    UNION ALL SELECT 'vida_con_sentido', CASE WHEN percibe_vida_con_sentido=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY percibe_vida_con_sentido
-    UNION ALL SELECT 'busco_ayuda', CASE WHEN ha_buscado_ayuda_profesional=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY ha_buscado_ayuda_profesional`)
+    `SELECT 'perdida_familiar', CASE WHEN perdida_familiar_reciente = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY perdida_familiar_reciente
+    UNION ALL SELECT 'violencia_fisica', CASE WHEN violencia_fisica = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY violencia_fisica
+    UNION ALL SELECT 'violencia_psicologica', CASE WHEN violencia_psicologica = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY violencia_psicologica
+    UNION ALL SELECT 'abuso_sexual', CASE WHEN abuso_sexual = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY abuso_sexual
+    UNION ALL SELECT 'bullying', CASE WHEN bullying = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY bullying
+    UNION ALL SELECT 'desempleo', CASE WHEN desempleo_reciente = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY desempleo_reciente
+    UNION ALL SELECT 'ruptura_pareja', CASE WHEN rupture_pareja_reciente = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY rupture_pareja_reciente
+    UNION ALL SELECT 'problema_legal', CASE WHEN problema_legal_reciente = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY problema_legal_reciente
+    UNION ALL SELECT 'tiene_red_apoyo', CASE WHEN tiene_red_apoyo = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY tiene_red_apoyo
+    UNION ALL SELECT 'vida_con_sentido', CASE WHEN percibe_vida_con_sentido = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY percibe_vida_con_sentido
+    UNION ALL SELECT 'busco_ayuda', CASE WHEN ha_buscado_ayuda_profesional = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_psicologicos GROUP BY ha_buscado_ayuda_profesional`)
 
   const impulsividad = await q<{ tipo: string; promedio: number }>(
     `SELECT 'motora' as tipo, ROUND(AVG(impulsividad_motora),2) as promedio FROM factores_psicologicos
@@ -133,10 +133,10 @@ async function obtenerContextoBD() {
   // === FACTORES SOCIOECONÓMICOS ===
   const factoresSocio = await q<{ campo: string; valor: string; cantidad: bigint }>(
     `SELECT 'nivel_deudas', nivel_deudas, COUNT(*) FROM factores_socioeconomicos GROUP BY nivel_deudas
-    UNION ALL SELECT 'dificultad_economica', CASE WHEN dificultad_economica=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_socioeconomicos GROUP BY dificultad_economica
-    UNION ALL SELECT 'vive_solo', CASE WHEN vive_solo=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_socioeconomicos GROUP BY vive_solo
+    UNION ALL SELECT 'dificultad_economica', CASE WHEN dificultad_economica = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_socioeconomicos GROUP BY dificultad_economica
+    UNION ALL SELECT 'vive_solo', CASE WHEN vive_solo = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_socioeconomicos GROUP BY vive_solo
     UNION ALL SELECT 'tipo_vivienda', tipo_vivienda, COUNT(*) FROM factores_socioeconomicos GROUP BY tipo_vivienda
-    UNION ALL SELECT 'acceso_salud_mental', CASE WHEN acceso_salud_mental=1 THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_socioeconomicos GROUP BY acceso_salud_mental
+    UNION ALL SELECT 'acceso_salud_mental', CASE WHEN acceso_salud_mental = TRUE THEN 'si' ELSE 'no' END, COUNT(*) FROM factores_socioeconomicos GROUP BY acceso_salud_mental
     UNION ALL SELECT 'afiliacion_salud', tipo_afiliacion_salud, COUNT(*) FROM factores_socioeconomicos GROUP BY tipo_afiliacion_salud
     UNION ALL SELECT 'distancia_salud', distancia_servicio_salud, COUNT(*) FROM factores_socioeconomicos GROUP BY distancia_servicio_salud`)
 
@@ -149,14 +149,14 @@ async function obtenerContextoBD() {
 
   // === HISTORIAL DE INTENTOS ===
   const historial = await q<{ total: bigint; con_tratamiento: bigint; antecedentes_familiares: bigint; promedio_intentos: number }>(
-    `SELECT COUNT(*) as total, SUM(CASE WHEN tratamiento_psiquiatrico_previo=1 THEN 1 ELSE 0 END) as con_tratamiento, SUM(CASE WHEN antecedentes_familiares_suicidio=1 THEN 1 ELSE 0 END) as antecedentes_familiares, ROUND(AVG(num_intentos_previos),2) as promedio_intentos FROM historial_intentos`)
+    `SELECT COUNT(*) as total, SUM(CASE WHEN tratamiento_psiquiatrico_previo = TRUE THEN 1 ELSE 0 END) as con_tratamiento, SUM(CASE WHEN antecedentes_familiares_suicidio = TRUE THEN 1 ELSE 0 END) as antecedentes_familiares, ROUND(AVG(num_intentos_previos),2) as promedio_intentos FROM historial_intentos`)
 
   const metodosIntento = await q<{ metodo: string; cantidad: bigint }>(
     `SELECT metodo_intento as metodo, COUNT(*) as cantidad FROM historial_intentos WHERE metodo_intento IS NOT NULL GROUP BY metodo_intento`)
 
   // === FALLECIDOS ===
   const fallecidos = await q<{ total: bigint; voluntarios: bigint }>(
-    `SELECT COUNT(*) as total, SUM(CASE WHEN fallecimiento_voluntario=1 THEN 1 ELSE 0 END) as voluntarios FROM encuestas WHERE estado_usuario='fallecido'`)
+    `SELECT COUNT(*) as total, SUM(CASE WHEN fallecimiento_voluntario = TRUE THEN 1 ELSE 0 END) as voluntarios FROM encuestas WHERE estado_usuario='fallecido'`)
 
   // === FORMATEO ===
   const fmt = <T extends Record<string, any>>(rows: T[], keyFn: (r: T) => string, valFn: (r: T) => number) => {
