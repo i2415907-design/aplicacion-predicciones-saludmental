@@ -1,0 +1,332 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id              Int       @id @default(autoincrement())
+  alias           String    @unique
+  password        String
+  tipo            String    @default("usuario") // admin, usuario
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  encuestas       Encuesta[]
+
+  @@map("usuarios")
+}
+
+model Encuesta {
+  id                  Int      @id @default(autoincrement())
+  usuarioId           Int?     @map("usuario_id")
+  nombre              String?  // opcional
+  apellido            String?  // opcional
+  fechaCreacion       DateTime @default(now()) @map("fecha_creacion")
+  edad                Int
+  sexo                String   // masculino, femenino, no_binario, otro
+  estadoCivil         String?  @map("estado_civil") // soltero, casado, divorciado, viudo, union_libre, otro
+  nivelEducativo      String?  @map("nivel_educativo") // primaria, secundaria, tecnico, universitario, posgrado
+  ocupacion           String?
+  ingresoMensual      String?  @map("ingreso_mensual") // menos_1_smlv, 1_2_smlv, 2_4_smlv, 4_8_smlv, mas_8_smlv
+  zonaResidencia      String?  @map("zona_residencia") // urbana, rural
+  estadoUsuario       String   @default("vivo") @map("estado_usuario") // vivo, fallecido
+  causaFallecimiento  String?  @map("causa_fallecimiento")
+  fallecimientoVoluntario Boolean? @map("fallecimiento_voluntario")
+  fechaFallecimiento  DateTime? @map("fecha_fallecimiento")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  usuario             Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  phq9                Phq9Respuesta[]
+  cssrs               CssrsRespuesta[]
+  bhs                 BhsRespuesta[]
+  rosenberg           RosenbergRespuesta[]
+  dass21              Dass21Respuesta[]
+  socioeconomicos     FactoresSocioeconomicos?
+  saludFisica         SaludFisica?
+  psicologicos        FactoresPsicologicos?
+  historial           HistorialIntentos?
+  analisis            AnalisisIa[]
+  chatSesiones        ChatSesion[]
+  notificaciones      Notificacion[]
+
+  @@map("encuestas")
+}
+
+model Phq9Respuesta {
+  id                    Int    @id @default(autoincrement())
+  encuestaId            Int    @map("encuesta_id")
+  interesActividades    Int    @map("interes_actividades") // 0-3
+  estadoAnimo           Int    @map("estado_animo") // 0-3
+  sueno                 Int    // 0-3
+  energia               Int    // 0-3
+  apetito               Int    // 0-3
+  autoestima            Int    // 0-3
+  concentracion         Int    // 0-3
+  psicomotricidad       Int    // 0-3
+  ideacionSuicida       Int    @map("ideacion_suicida") // 0-3
+  dificultadFuncionamiento Int? @map("dificultad_funcionamiento")
+  puntajeTotal          Int    @default(0) @map("puntaje_total")
+  nivelGravedad         String @default("minimo") @map("nivel_gravedad") // minimo, leve, moderado, moderadamente_severo, severo
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("phq9_respuestas")
+}
+
+model CssrsRespuesta {
+  id                  Int      @id @default(autoincrement())
+  encuestaId          Int      @map("encuesta_id")
+  deseosMorir         Boolean  @default(false) @map("deseos_morir")
+  pensamientosSuicidas Boolean @default(false) @map("pensamientos_suicidas")
+  metodoSinPlan       Boolean  @default(false) @map("metodo_sin_plan")
+  intencionSinPlan    Boolean  @default(false) @map("intencion_sin_plan")
+  planEspecifico      Boolean  @default(false) @map("plan_especifico")
+  intencionEjecutar   Boolean  @default(false) @map("intencion_ejecutar")
+  intentoPrevio       Boolean  @default(false) @map("intento_previo")
+  fechaUltimoIntento  DateTime? @map("fecha_ultimo_intento")
+  metodoIntento       String?  @map("metodo_intento")
+  nivelSeveridad      String   @default("ideacion") @map("nivel_severidad") // ideacion, planificacion, intento_no_letal, intento_letal
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("cssrs_respuestas")
+}
+
+model BhsRespuesta {
+  id              Int     @id @default(autoincrement())
+  encuestaId      Int     @map("encuesta_id")
+  item1           Boolean @map("item_1")
+  item2           Boolean @map("item_2")
+  item3           Boolean @map("item_3")
+  item4           Boolean @map("item_4")
+  item5           Boolean @map("item_5")
+  item6           Boolean @map("item_6")
+  item7           Boolean @map("item_7")
+  item8           Boolean @map("item_8")
+  item9           Boolean @map("item_9")
+  item10          Boolean @map("item_10")
+  item11          Boolean @map("item_11")
+  item12          Boolean @map("item_12")
+  item13          Boolean @map("item_13")
+  item14          Boolean @map("item_14")
+  item15          Boolean @map("item_15")
+  item16          Boolean @map("item_16")
+  item17          Boolean @map("item_17")
+  item18          Boolean @map("item_18")
+  item19          Boolean @map("item_19")
+  item20          Boolean @map("item_20")
+  puntajeTotal    Int     @default(0) @map("puntaje_total")
+  nivelRiesgo     String  @default("bajo") @map("nivel_riesgo") // bajo, moderado, alto
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("bhs_respuestas")
+}
+
+model RosenbergRespuesta {
+  id          Int @id @default(autoincrement())
+  encuestaId  Int @map("encuesta_id")
+  item1       Int // 1-4
+  item2       Int
+  item3       Int
+  item4       Int
+  item5       Int
+  item6       Int
+  item7       Int
+  item8       Int
+  item9       Int
+  item10      Int
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("rosenberg_respuestas")
+}
+
+model Dass21Respuesta {
+  id              Int @id @default(autoincrement())
+  encuestaId      Int @map("encuesta_id")
+  item1           Int @map("item_1") // 0-3
+  item2           Int @map("item_2")
+  item3           Int @map("item_3")
+  item4           Int @map("item_4")
+  item5           Int @map("item_5")
+  item6           Int @map("item_6")
+  item7           Int @map("item_7")
+  item8           Int @map("item_8")
+  item9           Int @map("item_9")
+  item10          Int @map("item_10")
+  item11          Int @map("item_11")
+  item12          Int @map("item_12")
+  item13          Int @map("item_13")
+  item14          Int @map("item_14")
+  item15          Int @map("item_15")
+  item16          Int @map("item_16")
+  item17          Int @map("item_17")
+  item18          Int @map("item_18")
+  item19          Int @map("item_19")
+  item20          Int @map("item_20")
+  item21          Int @map("item_21")
+  puntajeEstres   Int @default(0) @map("puntaje_estres")
+  puntajeAnsiedad Int @default(0) @map("puntaje_ansiedad")
+  puntajeDepresion Int @default(0) @map("puntaje_depresion")
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("dass21_respuestas")
+}
+
+model FactoresSocioeconomicos {
+  id                        Int    @id @default(autoincrement())
+  encuestaId                Int    @unique @map("encuesta_id")
+  estadoLaboral             String? @map("estado_laboral") // empleado, desempleado, estudiante, jubilado, ama_casa, otro
+  satisfaccionLaboral       Int?   @map("satisfaccion_laboral") // 1-5
+  horasTrabajoSemanal       Int?   @map("horas_trabajo_semanal")
+  estresLaboral             Int?   @map("estres_laboral") // 1-5
+  nivelDeudas               String? @map("nivel_deudas") // sin_deudas, bajo, medio, alto, muy_alto
+  dificultadEconomica       Boolean? @map("dificultad_economica")
+  calidadRelacionesFamiliares Int? @map("calidad_relaciones_familiares") // 1-5
+  calidadRelacionesPareja   Int?   @map("calidad_relaciones_pareja") // 1-5
+  apoyoSocialPercibido      Int?   @map("apoyo_social_percibido") // 1-5
+  numPersonasConfianza      Int?   @map("num_personas_confianza")
+  viveSolo                  Boolean? @map("vive_solo")
+  tipoVivienda              String? @map("tipo_vivienda") // propia, alquilada, prestada, otro
+  calidadVivienda           Int?   @map("calidad_vivienda") // 1-5
+  accesoSaludMental         Boolean? @map("acceso_salud_mental")
+  tipoAfiliacionSalud       String? @map("tipo_afiliacion_salud") // contributivo, subsidiado, privado, ninguno
+  distanciaServicioSalud    String? @map("distancia_servicio_salud") // cerca, moderado, lejano, sin_acceso
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("factores_socioeconomicos")
+}
+
+model SaludFisica {
+  id                      Int     @id @default(autoincrement())
+  encuestaId              Int     @unique @map("encuesta_id")
+  enfermedadCronica       Boolean @default(false) @map("enfermedad_cronica")
+  tipoEnfermedadCronica   String? @map("tipo_enfermedad_cronica")
+  dolorCronico            Boolean @default(false) @map("dolor_cronico")
+  tratamientoMedicoActual Boolean @default(false) @map("tratamiento_medico_actual")
+  medicamentosActuales    String? @map("medicamentos_actuales")
+  calidadSueno            Int     @default(3) @map("calidad_sueno") // 1-5
+  horasSuenoPromedio      Float?  @map("horas_sueno_promedio")
+  insomnio                Boolean @default(false)
+  consumeAlcohol          Boolean @default(false) @map("consume_alcohol")
+  frecuenciaAlcohol       String? @map("frecuencia_alcohol") // nunca, ocasional, moderado, frecuente, diario
+  consumeTabaco           Boolean @default(false) @map("consume_tabaco")
+  frecuenciaTabaco        String? @map("frecuencia_tabaco") // nunca, ocasional, moderado, frecuente, diario
+  consumeDrogas           Boolean @default(false) @map("consume_drogas")
+  tipoDrogas              String? @map("tipo_drogas")
+  frecuenciaDrogas        String? @map("frecuencia_drogas") // nunca, ocasional, moderado, frecuente, diario
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("salud_fisica")
+}
+
+model FactoresPsicologicos {
+  id                          Int     @id @default(autoincrement())
+  encuestaId                  Int     @unique @map("encuesta_id")
+  erqReevaluacionCognitiva    Int?    @map("erq_reevaluacion_cognitiva") // 1-7
+  erqSupresionExpresiva       Int?    @map("erq_supresion_expresiva") // 1-7
+  impulsividadMotora          Int?    @map("impulsividad_motora") // 1-5
+  impulsividadNoPlanificada   Int?    @map("impulsividad_no_planificada") // 1-5
+  impulsividadAtencional      Int?    @map("impulsividad_atencional") // 1-5
+  perdidaFamiliarReciente     Boolean @default(false) @map("perdida_familiar_reciente")
+  violenciaFisica             Boolean @default(false) @map("violencia_fisica")
+  violenciaPsicologica        Boolean @default(false) @map("violencia_psicologica")
+  abusoSexual                 Boolean @default(false) @map("abuso_sexual")
+  bullying                    Boolean @default(false)
+  desempleoReciente           Boolean @default(false) @map("desempleo_reciente")
+  ruptureParejaReciente       Boolean @default(false) @map("rupture_pareja_reciente")
+  problemaLegalReciente       Boolean @default(false) @map("problema_legal_reciente")
+  tieneRedApoyo               Boolean @default(true) @map("tiene_red_apoyo")
+  percibeVidaConSentido       Boolean @default(true) @map("percibe_vida_con_sentido")
+  haBuscadoAyudaProfesional   Boolean @default(false) @map("ha_buscado_ayuda_profesional")
+  tipoAyudaProfesional        String? @map("tipo_ayuda_profesional")
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("factores_psicologicos")
+}
+
+model HistorialIntentos {
+  id                              Int     @id @default(autoincrement())
+  encuestaId                      Int     @unique @map("encuesta_id")
+  numIntentosPrevios              Int     @default(0) @map("num_intentos_previos")
+  primerIntentoEdad               Int?    @map("primer_intento_edad")
+  ultimoIntentoFecha              DateTime? @map("ultimo_intento_fecha")
+  metodoIntento                   String? @map("metodo_intento")
+  hospitalizacionPorIntento       Boolean @default(false) @map("hospitalizacion_por_intento")
+  tratamientoPsiquiatricoPrevio   Boolean @default(false) @map("tratamiento_psiquiatrico_previo")
+  antecedentesFamiliaresSuicidio  Boolean @default(false) @map("antecedentes_familiares_suicidio")
+  antecedentesFamiliaresEnfermedadMental Boolean @default(false) @map("antecedentes_familiares_enfermedad_mental")
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("historial_intentos")
+}
+
+model AnalisisIa {
+  id                    Int      @id @default(autoincrement())
+  encuestaId            Int      @map("encuesta_id")
+  tipoAnalisis          String   @map("tipo_analisis") // descriptivo, diagnostico, predictivo, prescriptivo
+  resultadoAnalisis     Json     @map("resultado_analisis")
+  nivelRiesgoCalculado  String?  @map("nivel_riesgo_calculado") // bajo, moderado, alto, muy_alto
+  recomendaciones       Json?
+  fechaAnalisis         DateTime @default(now()) @map("fecha_analisis")
+  modeloIa              String   @default("gpt-4o") @map("modelo_ia")
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("analisis_ia")
+}
+
+model ChatSesion {
+  id              Int      @id @default(autoincrement())
+  encuestaId      Int?     @map("encuesta_id")
+  fechaInicio     DateTime @default(now()) @map("fecha_inicio")
+  fechaFin        DateTime? @map("fecha_fin")
+  totalMensajes   Int      @default(0) @map("total_mensajes")
+  titulo          String?
+
+  encuesta  Encuesta?    @relation(fields: [encuestaId], references: [id], onDelete: SetNull)
+  mensajes  ChatMensaje[]
+
+  @@map("chat_sesiones")
+}
+
+model ChatMensaje {
+  id              Int      @id @default(autoincrement())
+  sesionId        Int      @map("sesion_id")
+  rol             String   // usuario, asistente, sistema
+  contenido       String
+  contextoDatos   Json?    @map("contexto_datos")
+  tokensUtilizados Int?    @map("tokens_utilizados")
+  fechaMensaje    DateTime @default(now()) @map("fecha_mensaje")
+
+  sesion ChatSesion @relation(fields: [sesionId], references: [id], onDelete: Cascade)
+
+  @@map("chat_mensajes")
+}
+
+model Notificacion {
+  id              Int      @id @default(autoincrement())
+  encuestaId      Int      @map("encuesta_id")
+  tipoRiesgo      String   @map("tipo_riesgo") // bajo, moderado, alto, critico
+  titulo          String
+  descripcion     String
+  leida           Boolean  @default(false)
+  accionRequerida String?  @map("accion_requerida")
+  respuesta       String?  // respuesta del admin/psicologo
+  fechaCreacion   DateTime @default(now()) @map("fecha_creacion")
+  fechaLectura    DateTime? @map("fecha_lectura")
+  fechaRespuesta  DateTime? @map("fecha_respuesta")
+
+  encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+
+  @@map("notificaciones")
+}
