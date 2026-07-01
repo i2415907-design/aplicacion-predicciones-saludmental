@@ -69,11 +69,11 @@ export async function GET(request: NextRequest) {
         (encuesta.socioeconomicos?.numPersonasConfianza || 0) === 0
 
       const riesgoCalc = calcularRiesgoGlobal({
-        phq9: encuesta.phq9?.puntajeTotal || 0,
+        phq9: encuesta.phq9?.[0]?.puntajeTotal || 0,
         bhs: encuesta.bhs?.puntajeTotal || 0,
         cssrs: encuesta.cssrs?.nivelSeveridad || 'sin_ideacion',
         desesperanza: (encuesta.bhs?.puntajeTotal || 0) >= 10,
-        ideacionSuicida: encuesta.phq9?.ideacionSuicida || 0,
+        ideacionSuicida: encuesta.phq9?.[0]?.ideacionSuicida || 0,
         intentoPrevio: encuesta.cssrs?.intentoPrevio || false,
         consumoSustancias: consumeSustancias || false,
         aislamientoSocial: aislamiento
@@ -90,8 +90,8 @@ export async function GET(request: NextRequest) {
         sexo: encuesta.sexo,
         fechaCreacion: encuesta.createdAt,
         usuario: encuesta.usuario?.alias || 'Anónimo',
-        phq9: encuesta.phq9?.puntajeTotal || 0,
-        nivelDepresion: encuesta.phq9?.nivelGravedad || 'minimo',
+        phq9: encuesta.phq9?.[0]?.puntajeTotal || 0,
+        nivelDepresion: encuesta.phq9?.[0]?.nivelGravedad || 'minimo',
         nivelIdeacion: encuesta.cssrs?.nivelSeveridad || 'sin_ideacion',
         nivelDesesperanza: encuesta.bhs?.nivelRiesgo || 'bajo',
         nivelRiesgo
