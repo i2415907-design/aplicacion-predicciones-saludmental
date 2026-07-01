@@ -22,7 +22,7 @@ export interface ChatResponse {
 async function obtenerContextoBD() {
   const totalEncuestas = await prisma.encuesta.count()
 
-  const q = async <T>(sql: string): Promise<T[]> => prisma.$queryRawUnsafe<T>(sql)
+  const q = async <T>(sql: string): Promise<T[]> => prisma.$queryRawUnsafe<T[]>(sql)
 
   // === DEMOGRAFÍA ===
   const distribucionSexo = await q<{ sexo: string; cantidad: bigint }>(
