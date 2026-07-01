@@ -264,12 +264,36 @@ async function main() {
       }
     })
 
-    // BHS
+    // BHS (CORREGIDO: objeto explícito en lugar de Record<string, any>)
     const bhsItems = generateBHS(p.bhsLevel)
     const bhs = calcularBHS(bhsItems)
-    const bhsData: Record<string, any> = { encuestaId: id, puntajeTotal: bhs.total, nivelRiesgo: bhs.nivel }
-    bhsItems.forEach((v, i) => { bhsData[`item${i + 1}`] = v })
-    await prisma.bhsRespuesta.create({ data: bhsData })
+    await prisma.bhsRespuesta.create({
+      data: {
+        encuestaId: id,
+        puntajeTotal: bhs.total,
+        nivelRiesgo: bhs.nivel,
+        item1: bhsItems[0],
+        item2: bhsItems[1],
+        item3: bhsItems[2],
+        item4: bhsItems[3],
+        item5: bhsItems[4],
+        item6: bhsItems[5],
+        item7: bhsItems[6],
+        item8: bhsItems[7],
+        item9: bhsItems[8],
+        item10: bhsItems[9],
+        item11: bhsItems[10],
+        item12: bhsItems[11],
+        item13: bhsItems[12],
+        item14: bhsItems[13],
+        item15: bhsItems[14],
+        item16: bhsItems[15],
+        item17: bhsItems[16],
+        item18: bhsItems[17],
+        item19: bhsItems[18],
+        item20: bhsItems[19],
+      }
+    })
 
     // Rosenberg
     const rosenbergItems = generateRosenberg(p.phq9Level === 'severo' ? 'bajo' : p.phq9Level === 'minimo' ? 'alto' : 'medio')
@@ -283,15 +307,38 @@ async function main() {
       }
     })
 
-    // DASS-21
+    // DASS-21 (CORREGIDO: objeto explícito en lugar de Record<string, any>)
     const dass21Items = generateDASS21(p.phq9Level)
     const dass21 = calcularDASS21(dass21Items)
-    const dassData: Record<string, any> = {
-      encuestaId: id,
-      puntajeEstres: dass21.estres, puntajeAnsiedad: dass21.ansiedad, puntajeDepresion: dass21.depresion,
-    }
-    dass21Items.forEach((v, i) => { dassData[`item${i + 1}`] = v })
-    await prisma.dass21Respuesta.create({ data: dassData })
+    await prisma.dass21Respuesta.create({
+      data: {
+        encuestaId: id,
+        puntajeEstres: dass21.estres,
+        puntajeAnsiedad: dass21.ansiedad,
+        puntajeDepresion: dass21.depresion,
+        item1: dass21Items[0],
+        item2: dass21Items[1],
+        item3: dass21Items[2],
+        item4: dass21Items[3],
+        item5: dass21Items[4],
+        item6: dass21Items[5],
+        item7: dass21Items[6],
+        item8: dass21Items[7],
+        item9: dass21Items[8],
+        item10: dass21Items[9],
+        item11: dass21Items[10],
+        item12: dass21Items[11],
+        item13: dass21Items[12],
+        item14: dass21Items[13],
+        item15: dass21Items[14],
+        item16: dass21Items[15],
+        item17: dass21Items[16],
+        item18: dass21Items[17],
+        item19: dass21Items[18],
+        item20: dass21Items[19],
+        item21: dass21Items[20],
+      }
+    })
 
     // Factores socioeconomicos
     const nivelDeudas = p.hasDebt ? pick(['medio', 'alto', 'muy_alto']) : pick(['sin_deudas', 'bajo'])
