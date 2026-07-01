@@ -61,7 +61,7 @@ Basándote en esta información, proporciona una respuesta específica y acciona
       model: groq(process.env.OPENAI_MODEL || 'llama-3.3-70b-versatile'),
       system: systemPrompt,
       prompt: message,
-      maxTokens: 1024,
+       maxOutputTokens: 1024,
     })
 
     return NextResponse.json({ response: text })
