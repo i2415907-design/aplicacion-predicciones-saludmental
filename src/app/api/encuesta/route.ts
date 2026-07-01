@@ -261,7 +261,17 @@ export async function POST(request: Request) {
       }
     })
 
-    return NextResponse.json(encuesta, { status: 201 })
+    // Unwrap array relations (one-to-many in schema but only one created per encuesta)
+    const result = {
+      ...encuesta,
+      phq9: encuesta.phq9?.[0] || null,
+      cssrs: encuesta.cssrs?.[0] || null,
+      bhs: encuesta.bhs?.[0] || null,
+      rosenberg: encuesta.rosenberg?.[0] || null,
+      dass21: encuesta.dass21?.[0] || null,
+    }
+
+    return NextResponse.json(result, { status: 201 })
   } catch (error) {
     console.error("Error al crear encuesta:", error)
     return NextResponse.json(
@@ -292,8 +302,16 @@ export async function GET(request: Request) {
       prisma.encuesta.count(),
     ])
 
+    // Unwrap array relations for each encuesta
+    const encuestasUnwrapped = encuestas.map(encuesta => ({
+      ...encuesta,
+      phq9: encuesta.phq9?.[0] || null,
+      cssrs: encuesta.cssrs?.[0] || null,
+      bhs: encuesta.bhs?.[0] || null,
+    }))
+
     return NextResponse.json({
-      encuestas,
+      encuestas: encuestasUnwrapped,
       pagination: {
         page,
         limit,
