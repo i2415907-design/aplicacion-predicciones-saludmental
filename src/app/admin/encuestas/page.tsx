@@ -1,8 +1,14 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Search, Filter, ChevronLeft, ChevronRight, Eye, AlertTriangle } from 'lucide-react'
+import { Search, Filter, ChevronLeft, ChevronRight, Eye, AlertTriangle, Download, Archive, Tag } from 'lucide-react'
 import Link from 'next/link'
+
+interface Categoria {
+  id: number
+  nombre: string
+  color: string | null
+}
 
 interface Encuesta {
   id: number
@@ -17,6 +23,7 @@ interface Encuesta {
   nivelIdeacion: string
   nivelDesesperanza: string
   nivelRiesgo: string
+  categorias: Array<{ id: number; nombre: string; color: string | null; casoId: number }>
 }
 
 interface Pagination {
@@ -32,6 +39,14 @@ export default function AdminEncuestasPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [riesgoFilter, setRiesgoFilter] = useState('')
+  const [categoriaFilter, setCategoriaFilter] = useState('')
+  const [categorias, setCategorias] = useState<Categoria[]>([])
+
+  useEffect(() => {
+    fetch('/api/admin/categorias')
+      .then(r => r.json())
+      .then(data => setCategorias(data.categorias || []))
+  }, [])
 
   const loadEncuestas = useCallback(async (page = 1) => {
     setLoading(true)
@@ -40,7 +55,8 @@ export default function AdminEncuestasPage() {
         page: page.toString(),
         limit: '20',
         ...(search && { search }),
-        ...(riesgoFilter && { riesgo: riesgoFilter })
+        ...(riesgoFilter && { riesgo: riesgoFilter }),
+        ...(categoriaFilter && { categoriaId: categoriaFilter }),
       })
 
       const res = await fetch(`/api/admin/encuestas?${params}`)
@@ -54,7 +70,7 @@ export default function AdminEncuestasPage() {
     } finally {
       setLoading(false)
     }
-  }, [search, riesgoFilter])
+  }, [search, riesgoFilter, categoriaFilter])
 
   useEffect(() => {
     loadEncuestas()
@@ -115,6 +131,19 @@ export default function AdminEncuestasPage() {
               <option value="muy_alto">Muy alto riesgo</option>
             </select>
           </div>
+          <div className="flex items-center gap-2">
+            <Archive className="w-5 h-5 text-gray-400" />
+            <select
+              value={categoriaFilter}
+              onChange={(e) => setCategoriaFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            >
+              <option value="">Todas las categorias</option>
+              {categorias.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -139,8 +168,9 @@ export default function AdminEncuestasPage() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sexo</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usuario</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">PHQ-9</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Depresión</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Depresion</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Riesgo</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Categoria</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
                 </tr>
@@ -150,7 +180,7 @@ export default function AdminEncuestasPage() {
                   <tr key={encuesta.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">#{encuesta.id}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">
-                      {encuesta.nombre || 'Anónimo'} {encuesta.apellido || ''}
+                      {encuesta.nombre || 'Anonimo'} {encuesta.apellido || ''}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">{encuesta.edad}</td>
                     <td className="px-4 py-3 text-sm text-gray-600 capitalize">{encuesta.sexo}</td>
@@ -165,17 +195,36 @@ export default function AdminEncuestasPage() {
                         {encuesta.nivelRiesgo.replace('_', ' ')}
                       </span>
                     </td>
+                    <td className="px-4 py-3">
+                      {encuesta.categorias.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {encuesta.categorias.map(cat => (
+                            <span
+                              key={cat.id}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white"
+                              style={{ backgroundColor: cat.color || '#6B7280' }}
+                            >
+                              <Tag className="w-2.5 h-2.5" />
+                              {cat.nombre}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400">Sin archivar</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-sm text-gray-500">
                       {new Date(encuesta.fechaCreacion).toLocaleDateString('es-CO')}
                     </td>
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/encuesta/${encuesta.id}`}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
-                      >
-                        <Eye className="w-4 h-4" />
-                        Ver
-                      </Link>
+                      <div className="flex items-center gap-1">
+                        <Link
+                          href={`/encuesta/${encuesta.id}`}
+                          className="inline-flex items-center gap-1 px-2 py-1.5 text-sm text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -188,7 +237,7 @@ export default function AdminEncuestasPage() {
         {pagination && pagination.pages > 1 && (
           <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
             <p className="text-sm text-gray-500">
-              Página {pagination.page} de {pagination.pages}
+              Pagina {pagination.page} de {pagination.pages}
             </p>
             <div className="flex items-center gap-2">
               <button

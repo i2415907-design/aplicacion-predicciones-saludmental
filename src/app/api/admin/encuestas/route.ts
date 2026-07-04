@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const search = searchParams.get('search') || ''
     const riesgo = searchParams.get('riesgo') || ''
+    const categoriaId = searchParams.get('categoriaId') || ''
+    const soloArchivadas = searchParams.get('soloArchivadas') === 'true'
     const skip = (page - 1) * limit
 
     // Build where clause
@@ -20,6 +22,16 @@ export async function GET(request: NextRequest) {
         { apellido: { contains: search } },
         { usuario: { alias: { contains: search } } }
       ]
+    }
+
+    if (categoriaId) {
+      where.casosArchivados = {
+        some: { categoriaId: parseInt(categoriaId) }
+      }
+    }
+
+    if (soloArchivadas) {
+      where.casosArchivados = { ...where.casosArchivados as object, some: {} }
     }
 
     const [encuestas, total] = await Promise.all([
@@ -48,6 +60,12 @@ export async function GET(request: NextRequest) {
             select: { tipoRiesgo: true },
             orderBy: { fechaCreacion: 'desc' },
             take: 1
+          },
+          casosArchivados: {
+            select: {
+              id: true,
+              categoria: { select: { id: true, nombre: true, color: true } }
+            }
           }
         },
         orderBy: { createdAt: 'desc' },
@@ -94,7 +112,13 @@ export async function GET(request: NextRequest) {
         nivelDepresion: encuesta.phq9?.[0]?.nivelGravedad || 'minimo',
         nivelIdeacion: encuesta.cssrs?.[0]?.nivelSeveridad || 'sin_ideacion',
         nivelDesesperanza: encuesta.bhs?.[0]?.nivelRiesgo || 'bajo',
-        nivelRiesgo
+        nivelRiesgo,
+        categorias: encuesta.casosArchivados.map(ca => ({
+          id: ca.categoria.id,
+          nombre: ca.categoria.nombre,
+          color: ca.categoria.color,
+          casoId: ca.id,
+        })),
       }
     })
 

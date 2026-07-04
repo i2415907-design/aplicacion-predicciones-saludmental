@@ -4,9 +4,15 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { interpretarPHQ9, interpretarDASS21 } from "@/lib/calculos"
+import { generarPdf } from "@/lib/pdf-generator"
+import { useAuth } from "@/lib/auth-context"
+import { ArchivarCaso } from "@/components/admin/archivar-caso"
+import { Download } from "lucide-react"
 
 interface EncuestaData {
   id: number
+  nombre: string | null
+  apellido: string | null
   edad: number
   sexo: string
   estadoCivil?: string
@@ -51,6 +57,7 @@ export default function EncuestaResultadoPage() {
   const params = useParams()
   const [encuesta, setEncuesta] = useState<EncuestaData | null>(null)
   const [loading, setLoading] = useState(true)
+  const { user, isAdmin } = useAuth()
 
   useEffect(() => {
     const fetchEncuesta = async () => {
@@ -275,19 +282,51 @@ export default function EncuestaResultadoPage() {
         </p>
       </div>
 
-      <div className="flex justify-between">
+      {/* Admin: Archivar caso */}
+      {isAdmin && user && (
+        <div className="mb-6">
+          <ArchivarCaso encuestaId={encuesta.id} adminAlias={user.alias} />
+        </div>
+      )}
+
+      <div className="flex flex-wrap justify-between gap-3">
         <Link
           href="/encuesta"
           className="px-6 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Nueva Encuesta
         </Link>
-        <Link
-          href="/dashboard"
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
-        >
-          Ver Dashboard
-        </Link>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              generarPdf({
+                id: encuesta.id,
+                nombre: encuesta.nombre,
+                apellido: encuesta.apellido,
+                edad: encuesta.edad,
+                sexo: encuesta.sexo,
+                estadoCivil: encuesta.estadoCivil,
+                nivelEducativo: encuesta.nivelEducativo,
+                fechaCreacion: encuesta.createdAt,
+                phq9: encuesta.phq9,
+                cssrs: encuesta.cssrs,
+                bhs: encuesta.bhs,
+                rosenberg: encuesta.rosenberg,
+                dass21: encuesta.dass21,
+              })
+            }}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            Descargar PDF
+          </button>
+          <Link
+            href="/dashboard"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+          >
+            Ver Dashboard
+          </Link>
+        </div>
       </div>
     </div>
   )

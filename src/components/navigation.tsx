@@ -14,6 +14,10 @@ const navItems = [
   { href: "/chat", label: "Chat IA" },
 ]
 
+const authItems = [
+  { href: "/usuario/encuestas", label: "Mis Encuestas" },
+]
+
 const adminItems = [
   { href: "/admin", label: "Panel Admin" },
 ]
@@ -78,6 +82,21 @@ export function Navigation() {
                 )}
               >
                 <Shield className="w-4 h-4" />
+                {item.label}
+              </Link>
+            ))}
+
+            {user && !isAdmin && authItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
+                  pathname.startsWith(item.href)
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                )}
+              >
                 {item.label}
               </Link>
             ))}
@@ -165,6 +184,22 @@ export function Navigation() {
                 )}
               >
                 <Shield className="w-4 h-4" />
+                {item.label}
+              </Link>
+            ))}
+
+            {user && !isAdmin && authItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className={cn(
+                  "block px-3 py-2 rounded-lg text-sm font-medium transition-colors mt-1",
+                  pathname.startsWith(item.href)
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                )}
+              >
                 {item.label}
               </Link>
             ))}

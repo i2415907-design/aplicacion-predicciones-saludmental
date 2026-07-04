@@ -51,6 +51,7 @@ model Encuesta {
   analisis            AnalisisIa[]
   chatSesiones        ChatSesion[]
   notificaciones      Notificacion[]
+  casosArchivados     CasosArchivados[]
 
   @@map("encuestas")
 }
@@ -329,4 +330,32 @@ model Notificacion {
   encuesta Encuesta @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
 
   @@map("notificaciones")
+}
+
+model CategoriasCasos {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique
+  descripcion String?
+  color       String?  @default("#6B7280")
+  icono       String?  @default("folder")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  casos CasosArchivados[]
+
+  @@map("categorias_casos")
+}
+
+model CasosArchivados {
+  id           Int      @id @default(autoincrement())
+  encuestaId   Int      @map("encuesta_id")
+  categoriaId  Int      @map("categoria_id")
+  notas        String?
+  archivadoPor String?  @map("archivado_por")
+  fechaArchivo DateTime @default(now()) @map("fecha_archivo")
+
+  encuesta  Encuesta        @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
+  categoria CategoriasCasos @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
+
+  @@unique([encuestaId, categoriaId])
+  @@map("casos_archivados")
 }
