@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { AuthProvider } from "@/lib/auth-context";
+import { InterstitialPopup } from "@/components/interstitial-popup";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="es">
       <body className={inter.className}>
         <AuthProvider>
+          <InterstitialPopup />
           <div className="min-h-screen bg-gray-50">
             <Navigation />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">

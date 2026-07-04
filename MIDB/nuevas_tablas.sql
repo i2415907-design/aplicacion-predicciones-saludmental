@@ -3,14 +3,28 @@
 -- Ejecutar en Supabase SQL Editor
 -- ============================================================
 
+-- Paso 0: Agregar PRIMARY KEY a encuestas si no existe
+-- (necesario para que las foreign keys funcionen)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'encuestas_pkey'
+  ) THEN
+    ALTER TABLE ONLY public.encuestas ADD CONSTRAINT encuestas_pkey PRIMARY KEY (id);
+  END IF;
+END
+$$;
+
+-- ============================================================
+
 -- Tabla 1: Categorías de archivado de casos
 -- Permite al admin crear categorías personalizadas para organizar casos
 CREATE TABLE IF NOT EXISTS categorias_casos (
   id SERIAL PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL UNIQUE,
   descripcion VARCHAR(255),
-  color VARCHAR(7) DEFAULT '#6B7280', -- hex color para UI
-  icono VARCHAR(50) DEFAULT 'folder', -- nombre del icono
+  color VARCHAR(7) DEFAULT '#6B7280',
+  icono VARCHAR(50) DEFAULT 'folder',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -21,9 +35,9 @@ CREATE TABLE IF NOT EXISTS casos_archivados (
   encuesta_id INTEGER NOT NULL REFERENCES encuestas(id) ON DELETE CASCADE,
   categoria_id INTEGER NOT NULL REFERENCES categorias_casos(id) ON DELETE CASCADE,
   notas TEXT,
-  archivado_por VARCHAR(191), -- alias del admin que archivó
+  archivado_por VARCHAR(191),
   fecha_archivo TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(encuesta_id, categoria_id) -- una encuesta no puede estar dos veces en la misma categoría
+  UNIQUE(encuesta_id, categoria_id)
 );
 
 -- Índices para búsquedas rápidas
@@ -61,7 +75,7 @@ CREATE POLICY "authenticated_read categorias" ON categorias_casos
 CREATE POLICY "authenticated_read casos" ON casos_archivados
   FOR SELECT USING (auth.role() = 'authenticated');
 
--- Permitir lectura anónima (para encuestas públicas)
+-- Permitir lectura anónima
 CREATE POLICY "anon_read categorias" ON categorias_casos
   FOR SELECT USING (auth.role() = 'anon');
 

@@ -12,7 +12,7 @@ export async function GET() {
     }
 
     const session = JSON.parse(sessionCookie.value)
-    const usuarioId = session.usuarioId
+    const usuarioId = session.id
 
     if (!usuarioId) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 })

@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Search, Filter, ChevronLeft, ChevronRight, Eye, AlertTriangle, Download, Archive, Tag } from 'lucide-react'
 import Link from 'next/link'
+import { generarPdf } from '@/lib/pdf-generator'
+import { ArchivarModal } from '@/components/admin/archivar-modal'
 
 interface Categoria {
   id: number
@@ -41,6 +43,7 @@ export default function AdminEncuestasPage() {
   const [riesgoFilter, setRiesgoFilter] = useState('')
   const [categoriaFilter, setCategoriaFilter] = useState('')
   const [categorias, setCategorias] = useState<Categoria[]>([])
+  const [archiveModal, setArchiveModal] = useState<{ encuestaId: number; casos: Encuesta['categorias'] } | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/categorias')
@@ -53,7 +56,7 @@ export default function AdminEncuestasPage() {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '20',
+        limit: '10',
         ...(search && { search }),
         ...(riesgoFilter && { riesgo: riesgoFilter }),
         ...(categoriaFilter && { categoriaId: categoriaFilter }),
@@ -92,6 +95,32 @@ export default function AdminEncuestasPage() {
       case 'moderado': return 'text-yellow-600'
       case 'leve': return 'text-blue-600'
       default: return 'text-green-600'
+    }
+  }
+
+  const handleDownloadPdf = async (encuesta: Encuesta) => {
+    try {
+      const res = await fetch(`/api/encuesta/${encuesta.id}`)
+      if (res.ok) {
+        const data = await res.json()
+        generarPdf({
+          id: data.id,
+          nombre: data.nombre,
+          apellido: data.apellido,
+          edad: data.edad,
+          sexo: data.sexo,
+          estadoCivil: data.estadoCivil,
+          nivelEducativo: data.nivelEducativo,
+          fechaCreacion: data.createdAt,
+          phq9: data.phq9?.[0] || data.phq9,
+          cssrs: data.cssrs?.[0] || data.cssrs,
+          bhs: data.bhs?.[0] || data.bhs,
+          rosenberg: data.rosenberg?.[0] || data.rosenberg,
+          dass21: data.dass21?.[0] || data.dass21,
+        })
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error)
     }
   }
 
@@ -221,9 +250,24 @@ export default function AdminEncuestasPage() {
                         <Link
                           href={`/encuesta/${encuesta.id}`}
                           className="inline-flex items-center gap-1 px-2 py-1.5 text-sm text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+                          title="Ver detalle"
                         >
                           <Eye className="w-4 h-4" />
                         </Link>
+                        <button
+                          onClick={() => handleDownloadPdf(encuesta)}
+                          className="inline-flex items-center gap-1 px-2 py-1.5 text-sm text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+                          title="Descargar PDF"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setArchiveModal({ encuestaId: encuesta.id, casos: encuesta.categorias })}
+                          className="inline-flex items-center gap-1 px-2 py-1.5 text-sm text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"
+                          title="Archivar caso"
+                        >
+                          <Archive className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -258,6 +302,21 @@ export default function AdminEncuestasPage() {
           </div>
         )}
       </div>
+      {/* Archive Modal */}
+      {archiveModal && (
+        <ArchivarModal
+          encuestaId={archiveModal.encuestaId}
+          adminAlias="admin"
+          categorias={categorias}
+          casosExistentes={archiveModal.casos.map(c => ({
+            id: c.casoId,
+            categoriaId: c.id,
+            categoria: { nombre: c.nombre, color: c.color },
+          }))}
+          onSaved={() => loadEncuestas(pagination?.page || 1)}
+          onClose={() => setArchiveModal(null)}
+        />
+      )}
     </div>
   )
 }

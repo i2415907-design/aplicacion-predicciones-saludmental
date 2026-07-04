@@ -293,13 +293,20 @@ export default function EncuestaPage() {
             </div>
 
             {/* Campos requeridos */}
-            <PreguntaEscala
-              label="¿Cuál es su edad? *"
-              value={formData.edad}
-              onChange={(v) => setFormData({ ...formData, edad: v })}
-              min={10}
-              max={100}
-            />
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                ¿Cuál es su edad? *
+              </label>
+              <select
+                value={formData.edad}
+                onChange={(e) => setFormData({ ...formData, edad: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+              >
+                {Array.from({ length: 91 }, (_, i) => i + 10).map((age) => (
+                  <option key={age} value={age}>{age} años</option>
+                ))}
+              </select>
+            </div>
             <PreguntaSeleccion
               label="¿Con qué género se identifica? *"
               value={formData.sexo}

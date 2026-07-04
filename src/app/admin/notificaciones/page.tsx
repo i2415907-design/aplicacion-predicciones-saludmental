@@ -28,6 +28,8 @@ export default function AdminNotificacionesPage() {
   const [filtro, setFiltro] = useState<'todas' | 'no_leidas' | 'leidas'>('todas')
   const [selectedNotif, setSelectedNotif] = useState<Notificacion | null>(null)
   const [respuesta, setRespuesta] = useState('')
+  const [pagina, setPagina] = useState(1)
+  const porPagina = 10
 
   const loadNotificaciones = useCallback(async () => {
     setLoading(true)
@@ -126,6 +128,9 @@ export default function AdminNotificacionesPage() {
     return true
   })
 
+  const totalPaginas = Math.ceil(notificacionesFiltradas.length / porPagina)
+  const notificacionesPagina = notificacionesFiltradas.slice((pagina - 1) * porPagina, pagina * porPagina)
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -142,7 +147,7 @@ export default function AdminNotificacionesPage() {
         {(['todas', 'no_leidas', 'leidas'] as const).map((f) => (
           <button
             key={f}
-            onClick={() => setFiltro(f)}
+            onClick={() => { setFiltro(f); setPagina(1) }}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filtro === f
                 ? 'bg-purple-100 text-purple-700'
@@ -167,7 +172,7 @@ export default function AdminNotificacionesPage() {
               <p className="text-gray-500">No hay notificaciones {filtro === 'no_leidas' ? 'pendientes' : ''}</p>
             </div>
           ) : (
-            notificacionesFiltradas.map((notif) => {
+            notificacionesPagina.map((notif) => {
               const config = getRiesgoConfig(notif.tipoRiesgo)
               return (
                 <div
@@ -214,6 +219,31 @@ export default function AdminNotificacionesPage() {
             })
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPaginas > 1 && (
+          <div className="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3">
+            <p className="text-sm text-gray-500">
+              Pagina {pagina} de {totalPaginas} ({notificacionesFiltradas.length} notificaciones)
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPagina(p => Math.max(1, p - 1))}
+                disabled={pagina === 1}
+                className="px-3 py-1.5 text-sm rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Anterior
+              </button>
+              <button
+                onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))}
+                disabled={pagina === totalPaginas}
+                className="px-3 py-1.5 text-sm rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Panel de detalle */}
         <div className="lg:col-span-1">
