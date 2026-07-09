@@ -7,11 +7,10 @@ export function InterstitialPopup() {
   const [show, setShow] = useState(false)
   const [dismissed, setDismissed] = useState(false)
 
-  // URL de la imagen del personaje (proporcionada por el usuario)
+  // URL de la imagen del personaje
   const characterImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmOH_GfXQiSAOChYDMGZEIdx-Hlhie-sLsWjQVMx8KdJh9e7FpsQydoHo&s=10";
 
   useEffect(() => {
-    // Verificar si el usuario ya ha visto el pop-up en esta sesión
     const alreadySeen = sessionStorage.getItem('interstitial_seen')
     if (!alreadySeen) {
       setShow(true)
@@ -24,57 +23,54 @@ export function InterstitialPopup() {
     sessionStorage.setItem('interstitial_seen', 'true')
   }
 
-  // Si no se debe mostrar o ya se cerró, no renderizar nada
   if (!show || dismissed) return null
 
   return (
-    // Overlay de pantalla completa (fondo oscurecido)
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+    // Fondo oscuro exterior (Overlay)
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
       
-      {/* Contenedor principal del Pop-up (la tarjeta modal) */}
-      {/* NOTA: Usamos inline styles para el fondo para mayor facilidad con URLs externas */}
+      {/* Contenedor del Pop-up */}
       <div 
-        className="relative w-full max-w-lg bg-gray-950 rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-gray-800 animate-slide-up"
+        className="relative w-full max-w-md bg-[#0a0a0a] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-zinc-800 aspect-[4/5] sm:aspect-auto"
         style={{
           backgroundImage: `url(${characterImageUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundSize: 'contain', // <--- Esto asegura que el personaje salga completo
+          backgroundPosition: 'top center', // <--- Centrado arriba para dejar espacio al texto abajo
           backgroundRepeat: 'no-repeat'
         }}
       >
         
-        {/* Capa de degradado (de negro opaco abajo a negro transparente arriba) */}
-        {/* Esto hace que el personaje se desvanezca de abajo hacia arriba en el fondo oscuro */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-gray-950/70 to-gray-950"></div>
+        {/* Degradado de abajo hacia arriba */}
+        {/* Desde negro sólido abajo (para leer el texto) hasta transparente arriba (para ver al personaje limpio) */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent"></div>
 
-        {/* Sección de Contenido (sobre el fondo y el degradado) */}
-        <div className="relative z-10 p-6 sm:p-10 flex flex-col items-center text-center">
+        {/* Contenido de la tarjeta */}
+        <div className="relative z-10 mt-auto p-6 sm:p-8 flex flex-col items-center text-center">
           
-          {/* Badge: "Proyecto en fase de pruebas" */}
-          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gray-900/80 text-white rounded-full text-xs sm:text-sm font-medium mb-6 border border-gray-700">
-            <Heart className="w-4 h-4 text-rose-400" fill="currentColor" />
+          {/* Badge */}
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-zinc-900/90 text-zinc-200 rounded-full text-xs font-medium mb-4 border border-zinc-800 backdrop-blur-sm">
+            <Heart className="w-3.5 h-3.5 text-rose-400" fill="currentColor" />
             Proyecto en fase de pruebas
           </span>
 
-          {/* Título: "¡Bienvenido/a!" */}
-          <h2 className="text-3xl font-extrabold text-white mb-4 drop-shadow-md">
-            ¡Bienvenido/a!
+          {/* Título */}
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 tracking-tight drop-shadow-md">
+            Bienvenido
           </h2>
 
-          {/* Primer Párrafo de Descripción */}
-          <p className="text-gray-200 text-sm sm:text-base leading-relaxed mb-6 max-w-md drop-shadow-md">
+          {/* Descripción */}
+          <p className="text-zinc-200 text-sm sm:text-base leading-relaxed mb-4 max-w-sm drop-shadow-md">
             Estás por usar un sistema de <strong className="text-white font-semibold">apoyo en salud mental</strong> todavía en fase de prueba. Los resultados que ves son generados con fines académicos.
           </p>
 
-          {/* Segundo Párrafo de Descripción */}
-          <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-10 max-w-md drop-shadow-md">
-            Si tú o alguien que conoces está pasando por un momento difícil, recuerda que <strong className="text-gray-200 font-medium">no estás solo/a</strong>. Puedes contactar a un profesional de salud mental o llamar a la línea de apoyo de tu país.
+          <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-6 max-w-sm drop-shadow-md">
+            Si tú o alguien que conoces está pasando por un momento difícil, recuerda que <strong className="text-zinc-200 font-medium">no estás solo/a</strong>. Puedes contactar a un profesional o llamar a la línea de apoyo.
           </p>
 
-          {/* Botón de Acción Principal */}
+          {/* Botón */}
           <button
             onClick={handleDismiss}
-            className="w-full sm:w-auto px-12 py-3.5 bg-white text-gray-950 font-bold rounded-2xl hover:bg-gray-100 active:scale-[0.97] transition-all shadow-lg text-lg"
+            className="w-full py-3.5 bg-zinc-200 text-black font-bold rounded-xl hover:bg-white active:scale-[0.98] transition-all shadow-xl text-base"
           >
             Entendido y continuar
           </button>
