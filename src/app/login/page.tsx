@@ -161,11 +161,7 @@ export default function LoginPage() {
           {/* Demo credentials */}
           {isLogin && (
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-500 font-medium mb-2">Credenciales de demo:</p>
-              <div className="text-xs text-gray-600 space-y-1">
-                <p><span className="font-medium">Admin:</span> admin / admin123</p>
-                <p><span className="font-medium">Usuario:</span> mariposa_123 / test123</p>
-              </div>
+
             </div>
           )}
         </div>
