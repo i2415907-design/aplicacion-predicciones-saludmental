@@ -7,6 +7,8 @@ export function InterstitialPopup() {
   const [show, setShow] = useState(false)
   const [dismissed, setDismissed] = useState(false)
 
+  const characterImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmOH_GfXQiSAOChYDMGZEIdx-Hlhie-sLsWjQVMx8KdJh9e7FpsQydoHo&s=10";
+
   useEffect(() => {
     const alreadySeen = sessionStorage.getItem('interstitial_seen')
     if (!alreadySeen) {
@@ -23,47 +25,55 @@ export function InterstitialPopup() {
   if (!show || dismissed) return null
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
-      {/* Fullscreen image background */}
-      <div className="absolute inset-0 bg-black">
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmOH_GfXQiSAOChYDMGZEIdx-Hlhie-sLsWjQVMx8KdJh9e7FpsQydoHo&s=10"
-          alt=""
-          className="w-full h-full object-cover"
-        />
-        {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-      </div>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in">
+      
+      <div className="relative w-full max-w-md h-[620px] bg-[#0a0a0a] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-zinc-800 animate-slide-up">
+        
+        {/* Capa de la Imagen */}
+        <div className="absolute top-0 left-0 w-full h-[85%] z-0 p-2">
+          <img 
+            src={characterImageUrl} 
+            alt="Personaje gigante" 
+            className="w-full h-full object-contain object-top transform scale-125 transition-transform duration-300" 
+          />
+        </div>
 
-      {/* Content overlaid on image */}
-      <div className="relative z-10 flex flex-col items-center justify-end h-full pb-12 px-6 text-center">
-        {/* Badge */}
-        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white/15 backdrop-blur-md rounded-full text-white text-sm font-medium mb-4 border border-white/10">
-          <Heart className="w-3.5 h-3.5 text-pink-400" fill="currentColor" />
-          Proyecto en fase de pruebas
-        </span>
+        {/* Degradado protector */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/90 to-transparent"></div>
 
-        {/* Title */}
-        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3 drop-shadow-lg">
-          Bienvenido
-        </h2>
+        {/* Sección de Contenido: Forzamos el texto blanco en el contenedor principal */}
+        <div className="relative z-20 mt-auto p-6 sm:p-8 flex flex-col items-center text-center text-white">
+          
+          {/* Badge */}
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-zinc-800/90 !text-white rounded-full text-xs font-semibold mb-4 border border-zinc-600 backdrop-blur-sm">
+            <Heart className="w-3.5 h-3.5 text-rose-400" fill="currentColor" />
+            Proyecto en fase de pruebas
+          </span>
 
-        {/* Description */}
-        <p className="text-white/90 text-base sm:text-lg leading-relaxed max-w-md mb-2 drop-shadow-md">
-          Estas por usar un sistema de <strong className="text-white">apoyo en salud mental</strong> todavia en fase de prueba. Los resultados que ves son generados con fines academicos.
-        </p>
+          {/* Título: Usamos !text-white para forzar el color sobre cualquier estilo global */}
+          <h2 className="text-2xl sm:text-3xl font-black !text-white mb-2 tracking-tight drop-shadow-xl">
+            Bienvenido
+          </h2>
 
-        <p className="text-white/70 text-sm sm:text-base leading-relaxed max-w-md mb-6 drop-shadow-md">
-          Si tu o alguien que conoces esta pasando por un momento dificil, recuerda que <strong className="text-white/90">no estas solo/a</strong>. Puedes contactar a un profesional de salud mental o llamar a la linea de apoyo.
-        </p>
+          {/* Descripción Principal */}
+          <p className="!text-white text-xs sm:text-sm leading-relaxed mb-3 max-w-xs drop-shadow-xl font-normal">
+            Estás por usar un sistema de <strong className="!text-white font-extrabold underline decoration-rose-500/50">apoyo en salud mental</strong> todavía en fase de prueba. Los resultados que ves son generados con fines académicos.
+          </p>
 
-        {/* Button */}
-        <button
-          onClick={handleDismiss}
-          className="px-10 py-3.5 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-100 transition-all shadow-2xl text-base sm:text-lg"
-        >
-          Entendido y continuar
-        </button>
+          {/* Nota Secundaria */}
+          <p className="!text-white/90 text-[11px] sm:text-xs leading-relaxed mb-6 max-w-xs drop-shadow-xl">
+            Si tú o alguien que conoces está pasando por un momento difícil, recuerda que <strong className="!text-white font-extrabold">no estás solo/a</strong>. Puedes contactar a un profesional o llamar a la línea de apoyo.
+          </p>
+
+          {/* Botón de Acción */}
+          <button
+            onClick={handleDismiss}
+            className="w-full py-3.5 bg-white !text-black font-black rounded-xl hover:bg-zinc-200 active:scale-[0.98] transition-all shadow-2xl text-sm sm:text-base tracking-wide"
+          >
+            Entendido y continuar
+          </button>
+        </div>
+
       </div>
     </div>
   )
