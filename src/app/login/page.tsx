@@ -61,9 +61,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -73,10 +73,10 @@ export default function LoginPage() {
                 <UserPlus className="w-8 h-8 text-indigo-600" />
               )}
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
               {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
             </h1>
-            <p className="text-gray-500 mt-2">
+            <p className="text-gray-500 dark:text-gray-400 mt-2">
               {isLogin
                 ? 'Accede al sistema de evaluación'
                 : 'Regístrate para comenzar la evaluación'}
@@ -86,7 +86,7 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Alias
               </label>
               <input
@@ -95,17 +95,17 @@ export default function LoginPage() {
                 onChange={(e) => setAlias(e.target.value)}
                 placeholder="Ej: mariposa_123"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-white dark:bg-gray-800 dark:text-gray-100"
               />
               {!isLogin && (
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                   Elige un alias anónimo. No uses tu nombre real.
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Contraseña
               </label>
               <div className="relative">
@@ -116,12 +116,12 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   minLength={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors pr-12"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors pr-12 bg-white dark:bg-gray-800 dark:text-gray-100"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -129,7 +129,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 dark:bg-red-900/20 text-red-600 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -160,7 +160,7 @@ export default function LoginPage() {
 
           {/* Demo credentials */}
           {isLogin && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
 
             </div>
           )}

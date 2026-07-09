@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #f9fafb;
   --foreground: #111827;
+}
+
+.dark {
+  --background: #030712;
+  --foreground: #f9fafb;
 }
 
 @theme inline {
@@ -27,12 +34,10 @@ body {
   box-sizing: border-box;
 }
 
-/* Fix for text visibility on all backgrounds */
 h1, h2, h3, h4, h5, h6, p, span, label, td, th {
   color: inherit;
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -42,6 +47,10 @@ h1, h2, h3, h4, h5, h6, p, span, label, td, th {
   background: #f1f5f9;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #94a3b8;
   border-radius: 4px;
@@ -49,4 +58,22 @@ h1, h2, h3, h4, h5, h6, p, span, label, td, th {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #64748b;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
 }

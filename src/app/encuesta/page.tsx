@@ -260,33 +260,33 @@ export default function EncuestaPage() {
       case 0: // Demográficos
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-gray-900">Datos Demográficos</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Datos Demográficos</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Solo edad y género son requeridos. Los demás datos son opcionales y ayudan a un mejor análisis.
             </p>
             
             {/* Campos opcionales de identificación */}
-            <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-              <p className="text-sm font-medium text-gray-700">Información opcional de identificación</p>
+            <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Información opcional de identificación</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Nombre (opcional)</label>
+                  <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Nombre (opcional)</label>
                   <input
                     type="text"
                     value={formData.nombre}
                     onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                     placeholder="Tu nombre"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-800 dark:text-gray-100"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Apellido (opcional)</label>
+                  <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Apellido (opcional)</label>
                   <input
                     type="text"
                     value={formData.apellido}
                     onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
                     placeholder="Tu apellido"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-800 dark:text-gray-100"
                   />
                 </div>
               </div>
@@ -294,13 +294,13 @@ export default function EncuestaPage() {
 
             {/* Campos requeridos */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 ¿Cuál es su edad? *
               </label>
               <select
                 value={formData.edad}
                 onChange={(e) => setFormData({ ...formData, edad: parseInt(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white dark:bg-gray-800 dark:text-gray-100"
               >
                 {Array.from({ length: 91 }, (_, i) => i + 10).map((age) => (
                   <option key={age} value={age}>{age} años</option>
@@ -320,17 +320,17 @@ export default function EncuestaPage() {
             />
 
             {/* Sección expandible de datos adicionales */}
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, mostrarDatosAdicionales: !formData.mostrarDatosAdicionales })}
-                className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between text-left transition-colors"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between text-left transition-colors"
               >
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   ¿Quieres agregar más datos? (opcional)
                 </span>
                 <svg
-                  className={`w-5 h-5 text-gray-500 transition-transform ${formData.mostrarDatosAdicionales ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform ${formData.mostrarDatosAdicionales ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -340,8 +340,8 @@ export default function EncuestaPage() {
               </button>
               
               {formData.mostrarDatosAdicionales && (
-                <div className="p-4 space-y-4 bg-white">
-                  <p className="text-xs text-gray-500">
+                <div className="p-4 space-y-4 bg-white dark:bg-gray-900">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     Estos datos son completamente opcionales y ayudan a un análisis más preciso.
                   </p>
                   <PreguntaSeleccion
@@ -413,12 +413,12 @@ export default function EncuestaPage() {
       case 1: // PHQ-9
         return (
           <div className="space-y-6">
-            <div className="bg-blue-50 p-4 rounded-lg mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">PHQ-9: Escala de Depresión</h3>
-              <p className="text-sm text-gray-600">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">PHQ-9: Escala de Depresión</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Durante las últimas 2 semanas, ¿con qué frecuencia le han molestado los siguientes problemas?
               </p>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                 0 = Nada en absoluto | 1 = Varios días | 2 = Más de la mitad | 3 = Casi todos los días
               </p>
             </div>
@@ -437,9 +437,9 @@ export default function EncuestaPage() {
       case 2: // C-SSRS
         return (
           <div className="space-y-6">
-            <div className="bg-red-50 p-4 rounded-lg mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">C-SSRS: Columbia Suicide Severity Rating Scale</h3>
-              <p className="text-sm text-gray-600">
+            <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">C-SSRS: Columbia Suicide Severity Rating Scale</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Evaluación de ideación y comportamiento suicida
               </p>
             </div>
@@ -459,9 +459,9 @@ export default function EncuestaPage() {
       case 3: // BHS
         return (
           <div className="space-y-6">
-            <div className="bg-yellow-50 p-4 rounded-lg mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">BHS: Escala de Desesperanza de Beck</h3>
-              <p className="text-sm text-gray-600">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">BHS: Escala de Desesperanza de Beck</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Para cada afirmación, indique si <strong>Sí</strong> o <strong>No</strong> se aplica a cómo se siente HOY
               </p>
             </div>
@@ -487,8 +487,8 @@ export default function EncuestaPage() {
               "No hay nada que esperar",
               "El futuro es incierto",
             ].map((texto, index) => (
-              <div key={index} className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-800 mb-2">{`${index + 1}. ${texto}`}</p>
+              <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">{`${index + 1}. ${texto}`}</p>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -496,7 +496,7 @@ export default function EncuestaPage() {
                     className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
                       formData.bhs[index] === false
                         ? "bg-blue-600 text-white"
-                        : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                        : "bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
                     }`}
                   >
                     No
@@ -507,7 +507,7 @@ export default function EncuestaPage() {
                     className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
                       formData.bhs[index] === true
                         ? "bg-blue-600 text-white"
-                        : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                        : "bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
                     }`}
                   >
                     Sí
@@ -521,9 +521,9 @@ export default function EncuestaPage() {
       case 4: // Rosenberg
         return (
           <div className="space-y-6">
-            <div className="bg-purple-50 p-4 rounded-lg mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Escala de Autoestima de Rosenberg</h3>
-              <p className="text-sm text-gray-600">
+            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Escala de Autoestima de Rosenberg</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 1 = Totalmente de acuerdo | 2 = De acuerdo | 3 = En desacuerdo | 4 = Totalmente en desacuerdo
               </p>
             </div>
@@ -554,12 +554,12 @@ export default function EncuestaPage() {
       case 5: // DASS-21
         return (
           <div className="space-y-6">
-            <div className="bg-green-50 p-4 rounded-lg mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">DASS-21: Depresión, Ansiedad y Estrés</h3>
-              <p className="text-sm text-gray-600">
+            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">DASS-21: Depresión, Ansiedad y Estrés</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Por favor lea cada afirmación y seleccione cuánto le ha ocurrido durante la semana pasada
               </p>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                 0 = No / En absoluto | 1 = Algo / Parte del tiempo | 2 = Mucho / Buena parte del tiempo | 3 = Enormemente / Casi todo el tiempo
               </p>
             </div>
@@ -601,7 +601,7 @@ export default function EncuestaPage() {
       case 6: // Socioeconómico
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-gray-900">Situación Socioeconómica</h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Situación Socioeconómica</h3>
             <PreguntaSeleccion
               label="¿Cuál es su nivel de deudas?"
               value={formData.socioeconomicos.nivelDeudas}
@@ -667,7 +667,7 @@ export default function EncuestaPage() {
       case 7: // Relaciones
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-gray-900">Relaciones y Apoyo Social</h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Relaciones y Apoyo Social</h3>
             <PreguntaEscala
               label="¿Cómo califica la calidad de sus relaciones familiares?"
               value={formData.relaciones.calidadRelacionesFamiliares}
@@ -728,7 +728,7 @@ export default function EncuestaPage() {
       case 8: // Salud Física
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-gray-900">Salud Física y Consumo de Sustancias</h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Salud Física y Consumo de Sustancias</h3>
             <PreguntaSiNo
               label="¿Tiene alguna enfermedad crónica diagnosticada?"
               value={formData.saludFisica.enfermedadCronica}
@@ -821,7 +821,7 @@ export default function EncuestaPage() {
       case 9: // Eventos Vitales
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-gray-900">Eventos Vitales y Factores Psicológicos</h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Eventos Vitales y Factores Psicológicos</h3>
             <PreguntaCheckbox
               label="Marque todas las situaciones que haya experimentado en los últimos 12 meses:"
               options={[
@@ -876,14 +876,14 @@ export default function EncuestaPage() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-2 sm:px-4">
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Encuesta de Evaluación</h1>
-      <p className="text-gray-600 mb-6 text-sm sm:text-base">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Encuesta de Evaluación</h1>
+      <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base">
         Formulario de evaluación multidimensional para la prevención de depresión y suicidio
       </p>
 
       <BarraProgreso pasoActual={pasoActual} totalPasos={PASOS.length} pasos={PASOS} />
 
-      <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 mb-6 overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-4 sm:p-6 mb-6 overflow-hidden">
         {renderPaso()}
       </div>
 
@@ -892,7 +892,7 @@ export default function EncuestaPage() {
           type="button"
           onClick={() => setPasoActual(Math.max(0, pasoActual - 1))}
           disabled={pasoActual === 0}
-          className="px-4 sm:px-6 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 sm:px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Anterior
         </button>

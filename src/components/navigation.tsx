@@ -6,6 +6,7 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
 import { LogIn, LogOut, User, Shield } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 const navItems = [
   { href: "/", label: "Inicio" },
@@ -40,15 +41,15 @@ export function Navigation() {
   }
 
   return (
-    <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
+    <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 transition-colors">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2 shrink-0">
             <img src="/favicon.jpg" alt="Logo" className="w-8 h-8 rounded-lg object-cover" />
-            <span className="font-bold text-lg text-gray-900 hidden sm:inline">
+            <span className="font-bold text-lg text-gray-900 dark:text-gray-100 hidden sm:inline">
               Salud Mental IA
             </span>
-            <span className="font-bold text-lg text-gray-900 sm:hidden">
+            <span className="font-bold text-lg text-gray-900 dark:text-gray-100 sm:hidden">
               SMIA
             </span>
           </Link>
@@ -62,8 +63,8 @@ export function Navigation() {
                 className={cn(
                   "px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
                   pathname === item.href
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                 )}
               >
                 {item.label}
@@ -77,8 +78,8 @@ export function Navigation() {
                 className={cn(
                   "px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1",
                   pathname.startsWith(item.href)
-                    ? "bg-purple-50 text-purple-700"
-                    : "text-purple-600 hover:text-purple-900 hover:bg-purple-50"
+                    ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"
+                    : "text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/20"
                 )}
               >
                 <Shield className="w-4 h-4" />
@@ -93,8 +94,8 @@ export function Navigation() {
                 className={cn(
                   "px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap",
                   pathname.startsWith(item.href)
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                 )}
               >
                 {item.label}
@@ -102,23 +103,24 @@ export function Navigation() {
             ))}
           </div>
 
-          {/* Desktop auth */}
-          <div className="hidden md:flex items-center">
+          {/* Desktop auth + theme */}
+          <div className="hidden md:flex items-center gap-2">
+            <ThemeToggle />
             {!loading && (
               user ? (
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <User className="w-4 h-4" />
                     <span>{user.alias}</span>
                     {isAdmin && (
-                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">
+                      <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400 text-xs rounded-full">
                         Admin
                       </span>
                     )}
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     Salir
@@ -136,25 +138,28 @@ export function Navigation() {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-50"
-            aria-label="Menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {menuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+          {/* Mobile: theme + menu */}
+          <div className="flex items-center gap-1 md:hidden">
+            <ThemeToggle />
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+              aria-label="Menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {menuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Mobile nav */}
         {menuOpen && (
-          <div className="md:hidden pb-4 border-t">
+          <div className="md:hidden pb-4 border-t border-gray-200 dark:border-gray-800">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -163,8 +168,8 @@ export function Navigation() {
                 className={cn(
                   "block px-3 py-2 rounded-lg text-sm font-medium transition-colors mt-1",
                   pathname === item.href
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                 )}
               >
                 {item.label}
@@ -179,8 +184,8 @@ export function Navigation() {
                 className={cn(
                   "block px-3 py-2 rounded-lg text-sm font-medium transition-colors mt-1 flex items-center gap-1",
                   pathname.startsWith(item.href)
-                    ? "bg-purple-50 text-purple-700"
-                    : "text-purple-600 hover:text-purple-900 hover:bg-purple-50"
+                    ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"
+                    : "text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/20"
                 )}
               >
                 <Shield className="w-4 h-4" />
@@ -196,30 +201,30 @@ export function Navigation() {
                 className={cn(
                   "block px-3 py-2 rounded-lg text-sm font-medium transition-colors mt-1",
                   pathname.startsWith(item.href)
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                 )}
               >
                 {item.label}
               </Link>
             ))}
 
-            <div className="border-t mt-2 pt-2">
+            <div className="border-t border-gray-200 dark:border-gray-800 mt-2 pt-2">
               {!loading && (
                 user ? (
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-400">
                       <User className="w-4 h-4" />
                       <span>{user.alias}</span>
                       {isAdmin && (
-                        <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">
+                        <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400 text-xs rounded-full">
                           Admin
                         </span>
                       )}
                     </div>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-1 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      className="w-full flex items-center gap-1 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       Cerrar Sesión
@@ -228,7 +233,7 @@ export function Navigation() {
                 ) : (
                   <button
                     onClick={handleLogin}
-                    className="w-full flex items-center gap-1 px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                    className="w-full flex items-center gap-1 px-3 py-2 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
                   >
                     <LogIn className="w-4 h-4" />
                     Iniciar Sesión

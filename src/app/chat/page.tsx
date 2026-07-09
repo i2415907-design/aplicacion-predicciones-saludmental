@@ -50,9 +50,9 @@ function PanelAnalisis({ analisis }: { analisis: AnalisisData }) {
   const data = analisis[dimensionActiva]
 
   return (
-    <div className="mt-3 border rounded-lg overflow-hidden bg-white shadow-sm">
+    <div className="mt-3 border rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
       {/* Tabs */}
-      <div className="flex border-b bg-gray-50">
+      <div className="flex border-b bg-gray-50 dark:bg-gray-800">
         {DIMENSIONES.map((dim) => {
           const c = COLOR_CLASSES[dim.color]
           const isActive = dim.key === dimensionActiva
@@ -63,7 +63,7 @@ function PanelAnalisis({ analisis }: { analisis: AnalisisData }) {
               className={`flex-1 px-3 py-2.5 text-xs font-medium transition-colors border-b-2 ${
                 isActive
                   ? `${c.activeBg} ${c.text} border-current`
-                  : "text-gray-500 border-transparent hover:bg-gray-100"
+                  : "text-gray-500 dark:text-gray-400 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
             >
               <span className="mr-1">{dim.icon}</span>
@@ -76,7 +76,7 @@ function PanelAnalisis({ analisis }: { analisis: AnalisisData }) {
       {/* Content */}
       <div className={`p-4 ${colors.bg}`}>
         <h4 className={`text-sm font-bold ${colors.text} mb-2`}>{data.titulo}</h4>
-        <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
+        <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
           {data.contenido}
         </div>
       </div>
@@ -133,14 +133,14 @@ export default function ChatPage() {
   return (
     <div className="max-w-5xl mx-auto h-[calc(100vh-200px)] flex flex-col">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Chat con IA</h1>
-        <p className="text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Chat con IA</h1>
+        <p className="text-gray-600 dark:text-gray-400">
           Consulta en lenguaje natural sobre datos de depresión y suicidio
         </p>
       </div>
 
       {/* Mensajes */}
-      <div className="flex-1 overflow-y-auto bg-white rounded-xl shadow-sm border p-4 mb-4">
+      <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-4 mb-4">
         {messages.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -148,10 +148,10 @@ export default function ChatPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               ¿En qué puedo ayudarte?
             </h3>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
               Pregúntame sobre los datos de depresión, factores de riesgo o tendencias
             </p>
             <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
@@ -159,7 +159,7 @@ export default function ChatPage() {
                 <button
                   key={index}
                   onClick={() => handleSend(sugerencia)}
-                  className="text-left p-2 text-xs text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="text-left p-2 text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   {sugerencia}
                 </button>
@@ -179,7 +179,7 @@ export default function ChatPage() {
                     className={`max-w-[85%] rounded-lg p-3 ${
                       message.role === "user"
                         ? "bg-blue-600 text-white"
-                        : "bg-gray-100 text-gray-900"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     }`}
                   >
                     <div className="whitespace-pre-wrap text-sm">
@@ -198,11 +198,11 @@ export default function ChatPage() {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 rounded-lg p-3">
+                <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
                   <div className="flex space-x-2">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
                   </div>
                 </div>
               </div>
@@ -221,7 +221,7 @@ export default function ChatPage() {
           onKeyPress={(e) => e.key === "Enter" && handleSend()}
           placeholder="Escribe tu pregunta..."
           disabled={isLoading}
-          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+          className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 bg-white dark:bg-gray-800 dark:text-gray-100"
         />
         <button
           onClick={() => handleSend()}
@@ -232,8 +232,8 @@ export default function ChatPage() {
         </button>
       </div>
 
-      <div className="mt-4 bg-yellow-50 rounded-lg p-3">
-        <p className="text-xs text-yellow-800">
+      <div className="mt-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3">
+        <p className="text-xs text-yellow-800 dark:text-yellow-300">
           <strong>Nota:</strong> Este chat utiliza IA para analizar datos. Las respuestas son
           informativas y no sustituyen una evaluación clínica profesional. En caso de crisis,
           contacte a un profesional de salud mental o llame al 988.

@@ -80,11 +80,11 @@ export default function EncuestaResultadoPage() {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3 mb-8"></div>
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mb-8"></div>
           <div className="grid grid-cols-2 gap-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
+              <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
             ))}
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function EncuestaResultadoPage() {
   if (!encuesta) {
     return (
       <div className="max-w-4xl mx-auto text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Encuesta no encontrada</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Encuesta no encontrada</h2>
         <Link href="/encuesta" className="text-blue-600 hover:underline">
           Volver al formulario
         </Link>
@@ -120,28 +120,28 @@ export default function EncuestaResultadoPage() {
     switch (nivel) {
       case "bajo":
       case "minimo":
-        return "bg-green-100 text-green-800"
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
       case "leve":
       case "moderado":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300"
       case "alto":
       case "moderadamente_severo":
-        return "bg-orange-100 text-orange-800"
+        return "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300"
       case "muy_alto":
       case "severo":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
     }
   }
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Resultados de la Encuesta #{encuesta.id}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Completada el {new Date(encuesta.createdAt).toLocaleDateString("es-ES")} | 
           {encuesta.edad} años | {encuesta.sexo}
         </p>
@@ -151,14 +151,14 @@ export default function EncuestaResultadoPage() {
       {(encuesta.cssrs?.nivelSeveridad === "planificacion" || 
         encuesta.cssrs?.nivelSeveridad === "intento_letal" ||
         (encuesta.phq9?.ideacionSuicida ?? 0) >= 2) && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
           <div className="flex items-center">
             <svg className="w-6 h-6 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div>
-              <p className="font-semibold text-red-800">Alerta de Riesgo Alto</p>
-              <p className="text-sm text-red-700">
+              <p className="font-semibold text-red-800 dark:text-red-300">Alerta de Riesgo Alto</p>
+              <p className="text-sm text-red-700 dark:text-red-400">
                 Se han detectado indicadores de riesgo que requieren atención profesional inmediata.
                 Si usted o alguien que conoce está en crisis, llame al 988 (Línea de Prevención del Suicidio).
               </p>
@@ -169,27 +169,27 @@ export default function EncuestaResultadoPage() {
 
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         {/* PHQ-9 */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">PHQ-9: Depresión</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">PHQ-9: Depresión</h3>
           <div className="text-center mb-4">
             <div className="text-4xl font-bold text-blue-600">
               {encuesta.phq9?.puntajeTotal || 0}
             </div>
-            <div className="text-sm text-gray-500">/ 27 puntos</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">/ 27 puntos</div>
           </div>
           <div className={`px-3 py-1 rounded-full text-sm font-medium ${getNivelColor(encuesta.phq9?.nivelGravedad || "")}`}>
             {interpretarPHQ9(encuesta.phq9?.puntajeTotal || 0)}
           </div>
           {encuesta.phq9?.ideacionSuicida !== undefined && encuesta.phq9.ideacionSuicida > 0 && (
-            <div className="mt-3 p-2 bg-yellow-50 rounded text-sm">
+            <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded text-sm">
               <span className="font-medium">Ítem 9 (ideación suicida):</span> {encuesta.phq9.ideacionSuicida}/3
             </div>
           )}
         </div>
 
         {/* C-SSRS */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">C-SSRS: Ideación Suicida</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">C-SSRS: Ideación Suicida</h3>
           <div className={`px-3 py-1 rounded-full text-sm font-medium mb-4 ${getNivelColor(
             encuesta.cssrs?.nivelSeveridad === "intento_letal" ? "alto" :
             encuesta.cssrs?.nivelSeveridad === "planificacion" ? "alto" :
@@ -201,20 +201,20 @@ export default function EncuestaResultadoPage() {
             {encuesta.cssrs?.nivelSeveridad === "intento_letal" && "Riesgo muy alto"}
           </div>
           <div className="space-y-2 text-sm">
-            <p>Deseos de morir: {encuesta.cssrs?.deseosMorir ? "Sí" : "No"}</p>
-            <p>Pensamientos suicidas: {encuesta.cssrs?.pensamientosSuicidas ? "Sí" : "No"}</p>
-            <p>Intento previo: {encuesta.cssrs?.intentoPrevio ? "Sí" : "No"}</p>
+            <p className="text-gray-700 dark:text-gray-300">Deseos de morir: {encuesta.cssrs?.deseosMorir ? "Sí" : "No"}</p>
+            <p className="text-gray-700 dark:text-gray-300">Pensamientos suicidas: {encuesta.cssrs?.pensamientosSuicidas ? "Sí" : "No"}</p>
+            <p className="text-gray-700 dark:text-gray-300">Intento previo: {encuesta.cssrs?.intentoPrevio ? "Sí" : "No"}</p>
           </div>
         </div>
 
         {/* BHS */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">BHS: Desesperanza</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">BHS: Desesperanza</h3>
           <div className="text-center mb-4">
             <div className="text-4xl font-bold text-purple-600">
               {encuesta.bhs?.puntajeTotal || 0}
             </div>
-            <div className="text-sm text-gray-500">/ 20 puntos</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">/ 20 puntos</div>
           </div>
           <div className={`px-3 py-1 rounded-full text-sm font-medium ${getNivelColor(encuesta.bhs?.nivelRiesgo || "")}`}>
             Desesperanza {encuesta.bhs?.nivelRiesgo === "bajo" ? "Baja" : 
@@ -223,13 +223,13 @@ export default function EncuestaResultadoPage() {
         </div>
 
         {/* Rosenberg */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Rosenberg: Autoestima</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Rosenberg: Autoestima</h3>
           <div className="text-center mb-4">
             <div className="text-4xl font-bold text-green-600">
               {rosenbergScore}
             </div>
-            <div className="text-sm text-gray-500">/ 40 puntos</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">/ 40 puntos</div>
           </div>
           <div className={`px-3 py-1 rounded-full text-sm font-medium ${getNivelColor(
             rosenbergScore <= 15 ? "alto" : rosenbergScore <= 25 ? "moderado" : "bajo"
@@ -239,15 +239,15 @@ export default function EncuestaResultadoPage() {
         </div>
 
         {/* DASS-21 */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 md:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">DASS-21: Depresión, Ansiedad y Estrés</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6 md:col-span-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">DASS-21: Depresión, Ansiedad y Estrés</h3>
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
                 {encuesta.dass21?.puntajeDepresion || 0}
               </div>
-              <div className="text-sm text-gray-500">Depresión</div>
-              <div className="text-xs text-gray-600 mt-1">
+              <div className="text-sm text-gray-500 dark:text-gray-400">Depresión</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 {interpretarDASS21(encuesta.dass21?.puntajeDepresion || 0, "depresion")}
               </div>
             </div>
@@ -255,8 +255,8 @@ export default function EncuestaResultadoPage() {
               <div className="text-2xl font-bold text-orange-600">
                 {encuesta.dass21?.puntajeAnsiedad || 0}
               </div>
-              <div className="text-sm text-gray-500">Ansiedad</div>
-              <div className="text-xs text-gray-600 mt-1">
+              <div className="text-sm text-gray-500 dark:text-gray-400">Ansiedad</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 {interpretarDASS21(encuesta.dass21?.puntajeAnsiedad || 0, "ansiedad")}
               </div>
             </div>
@@ -264,8 +264,8 @@ export default function EncuestaResultadoPage() {
               <div className="text-2xl font-bold text-red-600">
                 {encuesta.dass21?.puntajeEstres || 0}
               </div>
-              <div className="text-sm text-gray-500">Estrés</div>
-              <div className="text-xs text-gray-600 mt-1">
+              <div className="text-sm text-gray-500 dark:text-gray-400">Estrés</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 {interpretarDASS21(encuesta.dass21?.puntajeEstres || 0, "estres")}
               </div>
             </div>
@@ -273,9 +273,9 @@ export default function EncuestaResultadoPage() {
         </div>
       </div>
 
-      <div className="bg-blue-50 rounded-xl p-6 mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Nota Importante</h3>
-        <p className="text-sm text-gray-700">
+      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Nota Importante</h3>
+        <p className="text-sm text-gray-700 dark:text-gray-300">
           Estos resultados son una evaluación preliminar y no constituyen un diagnóstico clínico.
           Si usted está experimentando síntomas de depresión o pensamientos suicidas, por favor
           contacte a un profesional de salud mental. En caso de crisis, llame al 988.
@@ -292,7 +292,7 @@ export default function EncuestaResultadoPage() {
       <div className="flex flex-wrap justify-between gap-3">
         <Link
           href="/encuesta"
-          className="px-6 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
         >
           Nueva Encuesta
         </Link>

@@ -50,12 +50,12 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard BI</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Dashboard BI</h1>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm border p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-              <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+            <div key={i} className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6 animate-pulse">
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
             </div>
           ))}
         </div>
@@ -66,7 +66,7 @@ export default function DashboardPage() {
   if (!data) {
     return (
       <div className="max-w-7xl mx-auto text-center py-12">
-        <p className="text-gray-600">No hay datos disponibles</p>
+        <p className="text-gray-600 dark:text-gray-400">No hay datos disponibles</p>
       </div>
     )
   }
@@ -78,28 +78,28 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard BI</h1>
-      <p className="text-gray-600 mb-8">Análisis de datos de depresión y prevención del suicidio</p>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Dashboard BI</h1>
+      <p className="text-gray-600 dark:text-gray-400 mb-8">Análisis de datos de depresión y prevención del suicidio</p>
 
       {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <p className="text-sm text-gray-500 mb-1">Total Encuestas</p>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Encuestas</p>
           <p className="text-3xl font-bold text-blue-600">{data.totalEncuestas}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <p className="text-sm text-gray-500 mb-1">Último Mes</p>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Último Mes</p>
           <p className="text-3xl font-bold text-green-600">{data.encuestasUltimoMes}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <p className="text-sm text-gray-500 mb-1">Promedio PHQ-9</p>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Promedio PHQ-9</p>
           <p className="text-3xl font-bold text-orange-600">{data.promedioPHQ9}</p>
-          <p className="text-xs text-gray-400">/ 27 puntos</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500">/ 27 puntos</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <p className="text-sm text-gray-500 mb-1">Fallecidos</p>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Fallecidos</p>
           <p className="text-3xl font-bold text-red-600">{data.totalFallecidos}</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-400 dark:text-gray-500">
             {data.fallecimientosVoluntarios} voluntarios
           </p>
         </div>
@@ -108,8 +108,8 @@ export default function DashboardPage() {
       {/* Gráficas */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Distribución por Edad */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Distribución por Edad</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Distribución por Edad</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data.distribucionEdad}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -122,8 +122,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Distribución por Sexo */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Distribución por Sexo</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Distribución por Sexo</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -150,8 +150,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Niveles de Riesgo Suicida */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Niveles de Ideación Suicida</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Niveles de Ideación Suicida</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={riesgoData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -169,8 +169,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Resumen */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Resumen de Riesgo</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Resumen de Riesgo</h3>
           <div className="space-y-4">
             {riesgoData.map((item, index) => (
               <div key={item.name} className="flex items-center">
@@ -178,8 +178,8 @@ export default function DashboardPage() {
                   className="w-3 h-3 rounded-full mr-3"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="flex-1 text-sm text-gray-700">{item.name}</span>
-                <span className="font-semibold text-gray-900">{item.value}</span>
+                <span className="flex-1 text-sm text-gray-700 dark:text-gray-300">{item.name}</span>
+                <span className="font-semibold text-gray-900 dark:text-gray-100">{item.value}</span>
               </div>
             ))}
           </div>
@@ -187,8 +187,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Análisis de Tendencias */}
-      <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Tendencia de Encuestas (Últimos 12 meses)</h3>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border p-6 mb-8">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tendencia de Encuestas (Últimos 12 meses)</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={[
             { mes: "Ene", encuestas: 12 },
@@ -208,9 +208,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Footer con nota */}
-      <div className="bg-blue-50 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Sobre este Dashboard</h3>
-        <p className="text-sm text-gray-700">
+      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Sobre este Dashboard</h3>
+        <p className="text-sm text-gray-700 dark:text-gray-300">
           Los datos presentados provienen de encuestas clínicas con escalas validadas internacionalmente.
           Las estadísticas son actualizadas en tiempo real. Para análisis más detallados, utilice
           el Chat IA o consulte las secciones específicas de análisis.

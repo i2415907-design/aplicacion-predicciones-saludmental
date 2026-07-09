@@ -9,7 +9,7 @@ interface PreguntaSiNoProps {
 export function PreguntaSiNo({ label, value, onChange }: PreguntaSiNoProps) {
   return (
     <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700 mb-3">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
         {label}
       </label>
       <div className="flex space-x-4">
@@ -19,7 +19,7 @@ export function PreguntaSiNo({ label, value, onChange }: PreguntaSiNoProps) {
           className={`px-6 py-2 rounded-lg border text-sm font-medium transition-colors ${
             value === true
               ? "bg-blue-600 text-white border-blue-600"
-              : "bg-white text-gray-700 border-gray-300 hover:border-blue-400"
+              : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-400"
           }`}
         >
           Sí
@@ -30,7 +30,7 @@ export function PreguntaSiNo({ label, value, onChange }: PreguntaSiNoProps) {
           className={`px-6 py-2 rounded-lg border text-sm font-medium transition-colors ${
             value === false
               ? "bg-blue-600 text-white border-blue-600"
-              : "bg-white text-gray-700 border-gray-300 hover:border-blue-400"
+              : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-400"
           }`}
         >
           No

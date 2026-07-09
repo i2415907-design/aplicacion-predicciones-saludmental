@@ -30,40 +30,40 @@ const RIESGO_CONFIG = {
     icon: AlertTriangle,
     dot: 'bg-red-500',
     border: 'border-l-red-500',
-    bg: 'bg-red-50',
-    badge: 'bg-red-100 text-red-700',
+    bg: 'bg-red-50 dark:bg-red-900/20',
+    badge: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
     label: 'CRITICO',
   },
   alto: {
     icon: AlertCircle,
     dot: 'bg-orange-500',
     border: 'border-l-orange-500',
-    bg: 'bg-orange-50',
-    badge: 'bg-orange-100 text-orange-700',
+    bg: 'bg-orange-50 dark:bg-orange-900/20',
+    badge: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
     label: 'ALTO',
   },
   critico: {
     icon: AlertTriangle,
     dot: 'bg-red-500',
     border: 'border-l-red-500',
-    bg: 'bg-red-50',
-    badge: 'bg-red-100 text-red-700',
+    bg: 'bg-red-50 dark:bg-red-900/20',
+    badge: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
     label: 'CRITICO',
   },
   moderado: {
     icon: Bell,
     dot: 'bg-yellow-500',
     border: 'border-l-yellow-500',
-    bg: 'bg-yellow-50',
-    badge: 'bg-yellow-100 text-yellow-700',
+    bg: 'bg-yellow-50 dark:bg-yellow-900/20',
+    badge: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
     label: 'MODERADO',
   },
   bajo: {
     icon: Info,
     dot: 'bg-green-500',
     border: 'border-l-green-500',
-    bg: 'bg-green-50',
-    badge: 'bg-green-100 text-green-700',
+    bg: 'bg-green-50 dark:bg-green-900/20',
+    badge: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
     label: 'BAJO',
   },
 }
@@ -170,19 +170,19 @@ export default function AdminNotificacionesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notificaciones</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Alertas de riesgo y seguimiento de pacientes</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Notificaciones</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Alertas de riesgo y seguimiento de pacientes</p>
         </div>
         <div className="flex items-center gap-3">
           {countCritico > 0 && (
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <AlertTriangle className="w-4 h-4 text-red-500" />
-              <span className="text-sm font-medium text-red-700">{countCritico} Critico{countCritico > 1 ? 's' : ''}</span>
+              <span className="text-sm font-medium text-red-700 dark:text-red-300">{countCritico} Critico{countCritico > 1 ? 's' : ''}</span>
             </div>
           )}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
             <Bell className="w-4 h-4 text-purple-500" />
-            <span className="text-sm font-medium text-purple-700">{countNoLeidas} sin leer</span>
+            <span className="text-sm font-medium text-purple-700 dark:text-purple-300">{countNoLeidas} sin leer</span>
           </div>
         </div>
       </div>
@@ -200,12 +200,12 @@ export default function AdminNotificacionesPage() {
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               filtro === f.key
                 ? 'bg-purple-600 text-white shadow-sm'
-                : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
             }`}
           >
             {f.label}
             <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-              filtro === f.key ? 'bg-purple-500 text-purple-100' : 'bg-gray-100 text-gray-500'
+              filtro === f.key ? 'bg-purple-500 text-purple-100' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
             }`}>
               {f.count}
             </span>
@@ -218,17 +218,17 @@ export default function AdminNotificacionesPage() {
         {/* Notification list */}
         <div className="flex-1 min-w-0 space-y-3">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-16 bg-white rounded-xl border border-gray-100">
+            <div className="flex flex-col items-center justify-center py-16 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mb-3" />
-              <p className="text-sm text-gray-500">Cargando notificaciones...</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Cargando notificaciones...</p>
             </div>
           ) : notificacionesFiltradas.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BellOff className="w-8 h-8 text-gray-300" />
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-12 text-center">
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BellOff className="w-8 h-8 text-gray-300 dark:text-gray-500" />
               </div>
-              <p className="text-gray-700 font-medium">Sin notificaciones</p>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-gray-700 dark:text-gray-300 font-medium">Sin notificaciones</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {filtro === 'no_leidas' ? 'Todas las notificaciones han sido leidas' : 'No hay notificaciones para mostrar'}
               </p>
             </div>
@@ -246,11 +246,11 @@ export default function AdminNotificacionesPage() {
                       if (!notif.leida) marcarLeida(notif.id)
                     }}
                     className={`
-                      bg-white rounded-xl border border-gray-100 cursor-pointer
+                      bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 cursor-pointer
                       transition-all duration-150 hover:shadow-md
                       border-l-4 ${config.border}
                       ${isSelected ? 'ring-2 ring-purple-400 shadow-md' : ''}
-                      ${!notif.leida ? 'bg-gradient-to-r from-gray-50/50 to-white' : ''}
+                      ${!notif.leida ? 'bg-gradient-to-r from-gray-50/50 dark:from-gray-700/50 to-white dark:to-gray-800' : ''}
                     `}
                   >
                     <div className="p-4">
@@ -263,7 +263,7 @@ export default function AdminNotificacionesPage() {
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-0.5">
-                            <h3 className={`text-sm font-semibold truncate ${!notif.leida ? 'text-gray-900' : 'text-gray-700'}`}>
+                            <h3 className={`text-sm font-semibold truncate ${!notif.leida ? 'text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}>
                               {notif.titulo}
                             </h3>
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${config.badge}`}>
@@ -271,9 +271,9 @@ export default function AdminNotificacionesPage() {
                             </span>
                           </div>
 
-                          <p className="text-sm text-gray-500 line-clamp-1 mb-2">{notif.descripcion}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1 mb-2">{notif.descripcion}</p>
 
-                          <div className="flex items-center gap-3 text-xs text-gray-400">
+                          <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
                             <span className="flex items-center gap-1">
                               <User className="w-3 h-3" />
                               {notif.encuesta.nombre || 'Anonimo'} {notif.encuesta.apellido || ''}
@@ -304,15 +304,15 @@ export default function AdminNotificacionesPage() {
 
               {/* Pagination */}
               {totalPaginas > 1 && (
-                <div className="flex items-center justify-between bg-white rounded-xl border border-gray-100 px-4 py-3">
-                  <p className="text-xs text-gray-500">
+                <div className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 px-4 py-3">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     Pagina {pagina} de {totalPaginas} · {notificacionesFiltradas.length} notificaciones
                   </p>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => setPagina((p) => Math.max(1, p - 1))}
                       disabled={pagina === 1}
-                      className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -334,7 +334,7 @@ export default function AdminNotificacionesPage() {
                           className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${
                             pagina === pageNum
                               ? 'bg-purple-600 text-white'
-                              : 'text-gray-600 hover:bg-gray-100'
+                              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                           }`}
                         >
                           {pageNum}
@@ -344,7 +344,7 @@ export default function AdminNotificacionesPage() {
                     <button
                       onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
                       disabled={pagina === totalPaginas}
-                      className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -365,12 +365,12 @@ export default function AdminNotificacionesPage() {
               onSend={() => responderNotificacion(selectedNotif.id)}
             />
           ) : (
-            <div className="bg-white rounded-xl border border-gray-100 p-8 text-center sticky top-20">
-              <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Eye className="w-6 h-6 text-gray-300" />
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-8 text-center sticky top-20">
+              <div className="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Eye className="w-6 h-6 text-gray-300 dark:text-gray-500" />
               </div>
-              <p className="text-sm font-medium text-gray-700">Detalle de notificacion</p>
-              <p className="text-xs text-gray-400 mt-1">Selecciona una notificacion de la lista</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Detalle de notificacion</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Selecciona una notificacion de la lista</p>
             </div>
           )}
         </div>
@@ -394,29 +394,29 @@ function DetailPanel({
   const Icon = config.icon
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 sticky top-20 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 sticky top-20 overflow-hidden">
       {/* Header */}
-      <div className={`px-5 py-4 border-b border-gray-100 ${config.bg}`}>
+      <div className={`px-5 py-4 border-b border-gray-100 dark:border-gray-700 ${config.bg}`}>
         <div className="flex items-center gap-2 mb-1">
           <Icon className="w-4 h-4" />
           <span className={`text-xs font-bold uppercase tracking-wide ${config.badge.split(' ')[1]}`}>
             Riesgo {config.label}
           </span>
         </div>
-        <h3 className="font-semibold text-gray-900 text-sm leading-snug">{notif.titulo}</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-snug">{notif.titulo}</h3>
       </div>
 
       <div className="p-5 space-y-4">
         {/* Patient info */}
-        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+        <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+          <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
             <User className="w-5 h-5 text-purple-600" />
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
               {notif.encuesta.nombre || 'Anonimo'} {notif.encuesta.apellido || ''}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {notif.encuesta.edad} años · {notif.encuesta.sexo}
             </p>
           </div>
@@ -424,8 +424,8 @@ function DetailPanel({
 
         {/* Description */}
         <div>
-          <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Descripcion</p>
-          <p className="text-sm text-gray-700 leading-relaxed">{notif.descripcion}</p>
+          <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Descripcion</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{notif.descripcion}</p>
         </div>
 
         {/* Required action */}
@@ -437,7 +437,7 @@ function DetailPanel({
         )}
 
         {/* Timestamp */}
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-gray-400 dark:text-gray-500">
           {new Date(notif.fechaCreacion).toLocaleString('es-CO', {
             day: 'numeric', month: 'long', year: 'numeric',
             hour: '2-digit', minute: '2-digit',
@@ -456,7 +456,7 @@ function DetailPanel({
         </a>
 
         {/* Response */}
-        <div className="border-t border-gray-100 pt-4">
+        <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
           {notif.respuesta ? (
             <div className="p-3 bg-purple-50 border border-purple-100 rounded-lg">
               <p className="text-[11px] font-semibold text-purple-500 uppercase tracking-wider mb-1">Tu respuesta</p>
@@ -469,7 +469,7 @@ function DetailPanel({
                 value={respuesta}
                 onChange={(e) => setRespuesta(e.target.value)}
                 placeholder="Escribe una respuesta o accion tomada..."
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder:text-gray-400"
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg text-sm resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder:text-gray-400 dark:bg-gray-700 dark:text-gray-100"
                 rows={3}
               />
               <button

@@ -86,44 +86,44 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard de Administración</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard de Administración</h1>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Total Encuestas</p>
-              <p className="text-3xl font-bold text-gray-900">{stats?.totalEncuestas || 0}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Encuestas</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{stats?.totalEncuestas || 0}</p>
             </div>
             <FileText className="w-10 h-10 text-blue-500 opacity-50" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Nuevas Hoy</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Nuevas Hoy</p>
               <p className="text-3xl font-bold text-green-600">{stats?.encuestasHoy || 0}</p>
             </div>
             <TrendingUp className="w-10 h-10 text-green-500 opacity-50" />
           </div>
         </div>
 
-        <Link href="/admin/notificaciones" className="bg-white rounded-xl shadow-sm p-5 border border-gray-100 hover:shadow-md transition-shadow">
+        <Link href="/admin/notificaciones" className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Notificaciones Pendientes</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Notificaciones Pendientes</p>
               <p className="text-3xl font-bold text-orange-600">{stats?.notificacionesPendientes || 0}</p>
             </div>
             <Bell className="w-10 h-10 text-orange-500 opacity-50" />
           </div>
         </Link>
 
-        <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Riesgo Crítico</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Riesgo Crítico</p>
               <p className="text-3xl font-bold text-red-600">{stats?.riesgoCritico || 0}</p>
             </div>
             <AlertTriangle className="w-10 h-10 text-red-500 opacity-50" />
@@ -132,25 +132,25 @@ export default function AdminDashboard() {
       </div>
 
       {/* Notificaciones Recientes */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="font-semibold text-gray-900">Notificaciones Recientes</h2>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+          <h2 className="font-semibold text-gray-900 dark:text-gray-100">Notificaciones Recientes</h2>
           <Link href="/admin/notificaciones" className="text-sm text-purple-600 hover:text-purple-700">
             Ver todas →
           </Link>
         </div>
-        <div className="divide-y divide-gray-50">
+        <div className="divide-y divide-gray-50 dark:divide-gray-800">
           {notificaciones.length === 0 ? (
-            <div className="px-5 py-8 text-center text-gray-500">
+            <div className="px-5 py-8 text-center text-gray-500 dark:text-gray-400">
               No hay notificaciones pendientes
             </div>
           ) : (
             notificaciones.map((notif) => (
-              <div key={notif.id} className={`px-5 py-4 flex items-center gap-4 ${!notif.leida ? 'bg-purple-50/50' : ''}`}>
+              <div key={notif.id} className={`px-5 py-4 flex items-center gap-4 ${!notif.leida ? 'bg-purple-50/50 dark:bg-purple-900/10' : ''}`}>
                 {getRiesgoIcon(notif.tipoRiesgo)}
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 truncate">{notif.titulo}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{notif.titulo}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {notif.encuesta.nombre || 'Anónimo'} {notif.encuesta.apellido || ''} 
                     · {notif.encuesta.edad} años · {new Date(notif.fechaCreacion).toLocaleDateString('es-CO')}
                   </p>

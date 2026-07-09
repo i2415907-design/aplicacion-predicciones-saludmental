@@ -42,18 +42,18 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Admin Header */}
-      <div className="bg-white border-b shadow-sm">
+      <div className="bg-white dark:bg-gray-900 border-b dark:border-gray-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-purple-600" />
-              <span className="font-semibold text-gray-900">Panel de Administración</span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">Panel de Administración</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Psicólogo de turno:</span>
-              <span className="font-medium text-gray-900">{user.alias}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Psicólogo de turno:</span>
+              <span className="font-medium text-gray-900 dark:text-gray-100">{user.alias}</span>
             </div>
           </div>
         </div>
@@ -63,7 +63,7 @@ export default function AdminLayout({
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Navigation */}
           <aside className="lg:w-64 shrink-0">
-            <nav className="bg-white rounded-xl shadow-sm p-2 sticky top-20">
+            <nav className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-2 sticky top-20">
               {adminNavItems.map((item) => {
                 const Icon = item.icon
                 const isActive = item.href === '/admin' 
@@ -77,8 +77,8 @@ export default function AdminLayout({
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-purple-50 text-purple-700"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                        ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800"
                     )}
                   >
                     <Icon className="w-5 h-5" />
