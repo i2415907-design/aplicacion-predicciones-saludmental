@@ -44,7 +44,7 @@ export function InterstitialPopup() {
         {/* Degradado de abajo hacia arriba más denso para proteger la lectura de las letras claras */}
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/90 to-transparent"></div>
 
-        {/* Sección de Contenido (Letras en Blanco Puro / Claro) */}
+        {/* Sección de Contenido (Todo en Blanco Puro) */}
         <div className="relative z-20 mt-auto p-6 sm:p-8 flex flex-col items-center text-center">
           
           {/* Badge */}
@@ -53,22 +53,22 @@ export function InterstitialPopup() {
             Proyecto en fase de pruebas
           </span>
 
-          {/* Título: Blanco Puro */}
+          {/* Título: Blanco */}
           <h2 className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-tight drop-shadow-xl">
             Bienvenido
           </h2>
 
-          {/* Descripción Principal: Blanco Brillante */}
+          {/* Descripción Principal: Blanco */}
           <p className="text-white text-xs sm:text-sm leading-relaxed mb-3 max-w-xs drop-shadow-xl font-normal">
             Estás por usar un sistema de <strong className="text-white font-extrabold underline decoration-rose-500/50">apoyo en salud mental</strong> todavía en fase de prueba. Los resultados que ves son generados con fines académicos.
           </p>
 
-          {/* Nota Secundaria: Gris ultra claro */}
-          <p className="text-zinc-200 text-[11px] sm:text-xs leading-relaxed mb-6 max-w-xs drop-shadow-xl">
-            Si tú o alguien que conoces está pasando por un momento difícil, recuerda que <strong className="text-white font-bold">no estás solo/a</strong>. Puedes contactar a un profesional o llamar a la línea de apoyo.
+          {/* Nota Secundaria: Blanco */}
+          <p className="text-white text-[11px] sm:text-xs leading-relaxed mb-6 max-w-xs drop-shadow-xl opacity-90">
+            Si tú o alguien que conoces está pasando por un momento difícil, recuerda que <strong className="text-white font-extrabold">no estás solo/a</strong>. Puedes contactar a un profesional o llamar a la línea de apoyo.
           </p>
 
-          {/* Botón de Acción */}
+          {/* Botón de Acción: Fondo blanco con TEXTO NEGRO */}
           <button
             onClick={handleDismiss}
             className="w-full py-3.5 bg-white text-black font-black rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all shadow-2xl text-sm sm:text-base tracking-wide"
