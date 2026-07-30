@@ -4,10 +4,11 @@ import { prisma } from '@/lib/prisma'
 // PATCH /api/metricas/sesion/[id] - Actualizar sesión (último paso, completada, tiempo)
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id)
+    const { id: idStr } = await params
+    const id = parseInt(idStr)
     if (isNaN(id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
     }
