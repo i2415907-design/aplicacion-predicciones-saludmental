@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { BarraProgreso } from "@/components/encuesta/BarraProgreso"
 import { PreguntaEscala } from "@/components/encuesta/PreguntaEscala"
@@ -179,6 +179,32 @@ export default function EncuestaPage() {
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Session tracking
+  const sesionIdRef = useRef<number | null>(null)
+  const inicioRef = useRef<Date>(new Date())
+
+  // Create session on mount
+  useEffect(() => {
+    inicioRef.current = new Date()
+    fetch("/api/metricas/sesion", { method: "POST" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.sesionId) sesionIdRef.current = data.sesionId
+      })
+      .catch(() => {})
+  }, [])
+
+  // Update step on session when pasoActual changes
+  useEffect(() => {
+    if (sesionIdRef.current && pasoActual > 0) {
+      fetch(`/api/metricas/sesion/${sesionIdRef.current}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ultimoPaso: pasoActual }),
+      }).catch(() => {})
+    }
+  }, [pasoActual])
+
   const updatePHQ9 = (campo: keyof FormData["phq9"], valor: number) => {
     setFormData((prev) => ({
       ...prev,
@@ -246,6 +272,23 @@ export default function EncuestaPage() {
       })
       if (response.ok) {
         const result = await response.json()
+
+        // Mark session as completed
+        if (sesionIdRef.current) {
+          const tiempoSegundos = Math.round(
+            (Date.now() - inicioRef.current.getTime()) / 1000
+          )
+          fetch(`/api/metricas/sesion/${sesionIdRef.current}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              completada: true,
+              tiempoSegundos,
+              encuestaId: result.id,
+            }),
+          }).catch(() => {})
+        }
+
         router.push(`/encuesta/${result.id}`)
       }
     } catch (error) {

@@ -7,6 +7,7 @@ import { interpretarPHQ9, interpretarDASS21 } from "@/lib/calculos"
 import { generarPdf } from "@/lib/pdf-generator"
 import { useAuth } from "@/lib/auth-context"
 import { ArchivarCaso } from "@/components/admin/archivar-caso"
+import { SatisfaccionEncuesta } from "@/components/encuesta/satisfaccion-encuesta"
 import { Download } from "lucide-react"
 
 interface EncuestaData {
@@ -147,6 +148,20 @@ export default function EncuestaResultadoPage() {
         </p>
       </div>
 
+      {/* Línea de crisis - siempre visible */}
+      <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg">
+        <div className="flex items-center gap-3 flex-wrap">
+          <svg className="w-5 h-5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <p className="text-sm text-amber-800 dark:text-amber-300">
+            <strong>Si estás en crisis, llama ahora:</strong>{' '}
+            <a href="tel:116" className="font-bold underline hover:text-amber-600">SAMU 116</a>{' '}|{' '}
+            <a href="tel:100" className="font-bold underline hover:text-amber-600">Línea 100</a>
+          </p>
+        </div>
+      </div>
+
       {/* Alerta de riesgo alto */}
       {(encuesta.cssrs?.nivelSeveridad === "planificacion" || 
         encuesta.cssrs?.nivelSeveridad === "intento_letal" ||
@@ -160,7 +175,9 @@ export default function EncuestaResultadoPage() {
               <p className="font-semibold text-red-800 dark:text-red-300">Alerta de Riesgo Alto</p>
               <p className="text-sm text-red-700 dark:text-red-400">
                 Se han detectado indicadores de riesgo que requieren atención profesional inmediata.
-                Si usted o alguien que conoce está en crisis, llame al 988 (Línea de Prevención del Suicidio).
+                Si usted o alguien que conoce está en crisis, llame al{' '}
+                <a href="tel:116" className="font-bold underline">SAMU 116</a> o al{' '}
+                <a href="tel:100" className="font-bold underline">100</a>.
               </p>
             </div>
           </div>
@@ -276,9 +293,11 @@ export default function EncuestaResultadoPage() {
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 mb-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Nota Importante</h3>
         <p className="text-sm text-gray-700 dark:text-gray-300">
-          Estos resultados son una evaluación preliminar y no constituyen un diagnóstico clínico.
-          Si usted está experimentando síntomas de depresión o pensamientos suicidas, por favor
-          contacte a un profesional de salud mental. En caso de crisis, llame al 988.
+          Estos resultados son una evaluación preliminar y <strong>no constituyen un diagnóstico clínico</strong>.
+          Esta aplicación es un proyecto académico en fase de pruebas; los resultados son orientativos y no deben tomarse como definitivos.
+          Si usted está experimentando síntomas de depresión o pensamientos suicidas, contacte a un profesional de salud mental.
+          En caso de crisis, llame al <a href="tel:116" className="font-bold underline">SAMU 116</a> o al{' '}
+          <a href="tel:100" className="font-bold underline">100</a>.
         </p>
       </div>
 
@@ -327,6 +346,11 @@ export default function EncuestaResultadoPage() {
             Ver Dashboard
           </Link>
         </div>
+      </div>
+
+      {/* Encuesta de satisfacción */}
+      <div className="mt-6">
+        <SatisfaccionEncuesta encuestaId={encuesta.id} />
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import { Navigation } from "@/components/navigation";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { InterstitialPopup } from "@/components/interstitial-popup";
+import { CrisisBanner } from "@/components/crisis-banner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <InterstitialPopup />
+            <CrisisBanner />
             <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
               <Navigation />
               <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">

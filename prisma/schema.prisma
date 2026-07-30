@@ -38,6 +38,8 @@ model Encuesta {
   fechaFallecimiento  DateTime? @map("fecha_fallecimiento")
   createdAt           DateTime @default(now()) @map("created_at")
 
+  satisfaccion        Int?     // 1-5, null si no respondió
+
   usuario             Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
   phq9                Phq9Respuesta[]
   cssrs               CssrsRespuesta[]
@@ -52,6 +54,7 @@ model Encuesta {
   chatSesiones        ChatSesion[]
   notificaciones      Notificacion[]
   casosArchivados     CasosArchivados[]
+  sesion              SesionEncuesta?
 
   @@map("encuestas")
 }
@@ -358,4 +361,18 @@ model CasosArchivados {
 
   @@unique([encuestaId, categoriaId])
   @@map("casos_archivados")
+}
+
+model SesionEncuesta {
+  id              Int      @id @default(autoincrement())
+  inicioEn        DateTime @default(now()) @map("inicio_en")
+  ultimoPaso      Int      @default(0) @map("ultimo_paso")
+  completada      Boolean  @default(false)
+  tiempoSegundos  Int?     @map("tiempo_segundos")
+  encuestaId      Int?     @unique @map("encuesta_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  encuesta Encuesta? @relation(fields: [encuestaId], references: [id], onDelete: SetNull)
+
+  @@map("sesiones_encuesta")
 }
