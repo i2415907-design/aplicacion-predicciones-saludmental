@@ -89,12 +89,11 @@ export async function GET(request: NextRequest) {
       const riesgoCalc = calcularRiesgoGlobal({
         phq9: encuesta.phq9?.[0]?.puntajeTotal || 0,
         bhs: encuesta.bhs?.[0]?.puntajeTotal || 0,
-        cssrs: encuesta.cssrs?.[0]?.nivelSeveridad || 'sin_ideacion',
-        desesperanza: (encuesta.bhs?.[0]?.puntajeTotal || 0) >= 10,
-        ideacionSuicida: encuesta.phq9?.[0]?.ideacionSuicida || 0,
+        cssrs: encuesta.cssrs?.[0]?.nivelSeveridad || 'ninguna',
+        ideacionSuicidaPhq9: encuesta.phq9?.[0]?.ideacionSuicida || 0,
         intentoPrevio: encuesta.cssrs?.[0]?.intentoPrevio || false,
         consumoSustancias: consumeSustancias || false,
-        aislamientoSocial: aislamiento
+        aislamientoSocial: aislamiento,
       })
 
       // Prefer notification's risk level (stored at creation time)

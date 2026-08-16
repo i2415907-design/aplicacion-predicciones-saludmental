@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from 'next/server'
+import { EncuestaService } from '@/services/encuesta.service'
 
 export async function GET(
   request: Request,
@@ -7,31 +7,19 @@ export async function GET(
 ) {
   try {
     const { id: idStr } = await params
-    const id = parseInt(idStr)
+    const id = parseInt(idStr, 10)
 
-    const encuesta = await prisma.encuesta.findUnique({
-      where: { id },
-      include: {
-        phq9: true,
-        cssrs: true,
-        bhs: true,
-        rosenberg: true,
-        dass21: true,
-        socioeconomicos: true,
-        saludFisica: true,
-        psicologicos: true,
-      },
-    })
-
-    if (!encuesta) {
-      return NextResponse.json(
-        { error: "Encuesta no encontrada" },
-        { status: 404 }
-      )
+    if (isNaN(id)) {
+      return NextResponse.json({ error: 'ID de encuesta inválido' }, { status: 400 })
     }
 
-    // Unwrap arrays: phq9, cssrs, bhs, rosenberg, dass21 are one-to-many in schema
-    // but we always create exactly one per encuesta
+    const encuesta = await EncuestaService.obtenerEncuestaPorId(id)
+
+    if (!encuesta) {
+      return NextResponse.json({ error: 'Encuesta no encontrada' }, { status: 404 })
+    }
+
+    // Unwrap array relations for clean view consumption
     const result = {
       ...encuesta,
       phq9: encuesta.phq9?.[0] || null,
@@ -42,10 +30,10 @@ export async function GET(
     }
 
     return NextResponse.json(result)
-  } catch (error) {
-    console.error("Error:", error)
+  } catch (error: any) {
+    console.error('Error al obtener encuesta por id:', error)
     return NextResponse.json(
-      { error: "Error al obtener la encuesta" },
+      { error: 'Error al obtener la encuesta', details: error?.message },
       { status: 500 }
     )
   }

@@ -277,12 +277,6 @@ Basándote en los datos de la pregunta, ¿qué tendencias se observan? ¿Qué po
 
 ###PRESCRIPTIVO
 Dando respuesta concreta a la pregunta: ¿qué acciones se recomiendan? ¿Qué intervenciones aplican? ¿Qué recursos existen? Prioriza por urgencia.
-
-###PREDICTIVO
-Basándote en los datos de la pregunta, ¿qué tendencias se observan? ¿Qué podría ocurrir si no se interviene? ¿Qué patrones sugieren riesgo futuro?
-
-###PRESCRIPTIVO
-Dando respuesta concreta a la pregunta: ¿qué acciones se recomiendan? ¿Qué intervenciones aplican? ¿Qué recursos existen? Prioriza por urgencia.
 `
 
     const { text: textoAnalisis } = await generateText({
