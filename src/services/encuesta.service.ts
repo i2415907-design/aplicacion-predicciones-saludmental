@@ -7,163 +7,266 @@ import {
   calcularCSSRS,
   calcularRiesgoGlobal,
 } from '@/lib/calculos'
-import { EncuestaInput } from '@/validators/encuesta'
 
 export class EncuestaService {
   /**
-   * Crea una encuesta completa con todas sus escalas clínicas y factores asociados,
-   * calcula los puntajes en tiempo real y emite una alerta clínica si es necesario.
+   * Normaliza y crea una encuesta completa con todas sus escalas clínicas y factores asociados,
+   * calculando los puntajes en tiempo real y emitiendo una notificación clínica automática.
    */
-  static async crearEncuesta(data: EncuestaInput, usuarioId?: number | null) {
-    // 1. Cálculos de escalas clínicas
-    const phq9Calc = data.phq9 ? calcularPHQ9(data.phq9) : null
-    const dass21Calc = data.dass21 ? calcularDASS21(data.dass21) : null
-    const bhsCalc = data.bhs
-      ? calcularBHS([
-          data.bhs.item1, data.bhs.item2, data.bhs.item3, data.bhs.item4, data.bhs.item5,
-          data.bhs.item6, data.bhs.item7, data.bhs.item8, data.bhs.item9, data.bhs.item10,
-          data.bhs.item11, data.bhs.item12, data.bhs.item13, data.bhs.item14, data.bhs.item15,
-          data.bhs.item16, data.bhs.item17, data.bhs.item18, data.bhs.item19, data.bhs.item20,
-        ])
-      : null
-    const rosenbergCalc = data.rosenberg ? calcularRosenberg(data.rosenberg) : null
-    const cssrsCalc = data.cssrs ? calcularCSSRS(data.cssrs) : { nivelSeveridad: 'ninguna' }
+  static async crearEncuesta(rawBody: any, usuarioId?: number | null) {
+    // 1. Normalizar BHS (puede venir como array de booleans o como objeto con item1..item20)
+    let bhsArray: boolean[] = []
+    if (Array.isArray(rawBody.bhs)) {
+      bhsArray = rawBody.bhs
+    } else if (rawBody.bhs && typeof rawBody.bhs === 'object') {
+      bhsArray = Array.from({ length: 20 }, (_, i) => !!rawBody.bhs[`item${i + 1}`] || !!rawBody.bhs[`item_${i + 1}`])
+    }
+    const bhsCalc = bhsArray.length > 0 ? calcularBHS(bhsArray) : null
 
-    // 2. Cálculo compuesto de riesgo y triaje clínico
+    // 2. Normalizar Rosenberg (puede venir como array de números o como objeto)
+    let rosenbergArray: number[] = []
+    if (Array.isArray(rawBody.rosenberg)) {
+      rosenbergArray = rawBody.rosenberg
+    } else if (rawBody.rosenberg && typeof rawBody.rosenberg === 'object') {
+      rosenbergArray = Array.from({ length: 10 }, (_, i) => Number(rawBody.rosenberg[`item${i + 1}`]) || 2)
+    }
+    const rosenbergCalc = rosenbergArray.length > 0
+      ? calcularRosenberg({
+          item1: rosenbergArray[0] || 2,
+          item2: rosenbergArray[1] || 2,
+          item3: rosenbergArray[2] || 2,
+          item4: rosenbergArray[3] || 2,
+          item5: rosenbergArray[4] || 2,
+          item6: rosenbergArray[5] || 2,
+          item7: rosenbergArray[6] || 2,
+          item8: rosenbergArray[7] || 2,
+          item9: rosenbergArray[8] || 2,
+          item10: rosenbergArray[9] || 2,
+        })
+      : null
+
+    // 3. Normalizar DASS-21 (puede venir como array de 21 números o como objeto)
+    let dassArray: number[] = []
+    if (Array.isArray(rawBody.dass21)) {
+      dassArray = rawBody.dass21
+    } else if (rawBody.dass21 && typeof rawBody.dass21 === 'object') {
+      dassArray = Array.from({ length: 21 }, (_, i) => Number(rawBody.dass21[`item${i + 1}`]) || Number(rawBody.dass21[`item_${i + 1}`]) || 0)
+    }
+    const dass21Calc = dassArray.length > 0
+      ? calcularDASS21({
+          item1: dassArray[0] || 0, item2: dassArray[1] || 0, item3: dassArray[2] || 0,
+          item4: dassArray[3] || 0, item5: dassArray[4] || 0, item6: dassArray[5] || 0,
+          item7: dassArray[6] || 0, item8: dassArray[7] || 0, item9: dassArray[8] || 0,
+          item10: dassArray[9] || 0, item11: dassArray[10] || 0, item12: dassArray[11] || 0,
+          item13: dassArray[12] || 0, item14: dassArray[13] || 0, item15: dassArray[14] || 0,
+          item16: dassArray[15] || 0, item17: dassArray[16] || 0, item18: dassArray[17] || 0,
+          item19: dassArray[18] || 0, item20: dassArray[19] || 0, item21: dassArray[20] || 0,
+        })
+      : null
+
+    // 4. PHQ-9 y C-SSRS
+    const phq9Calc = rawBody.phq9 ? calcularPHQ9(rawBody.phq9) : null
+    const cssrsCalc = rawBody.cssrs ? calcularCSSRS(rawBody.cssrs) : { nivelSeveridad: 'ninguna' as const }
+
+    // 5. Factores Psicosociales, Salud y Relaciones
+    const salud = rawBody.saludFisica || {}
+    const socio = rawBody.socioeconomicos || {}
+    const rel = rawBody.relaciones || {}
+    const psico = rawBody.psicologicos || {}
+    const hist = rawBody.historial || {}
+    const eventos: string[] = Array.isArray(psico.eventos) ? psico.eventos : []
+
+    // 6. Cálculo compuesto de riesgo
     const riesgoGlobal = calcularRiesgoGlobal({
       phq9: phq9Calc?.puntajeTotal || 0,
       bhs: bhsCalc?.puntajeTotal || 0,
       cssrs: cssrsCalc.nivelSeveridad,
-      ideacionSuicidaPhq9: data.phq9?.ideacionSuicida,
-      intentoPrevio: data.cssrs?.intentoPrevio || data.historial?.numIntentosPrevios ? true : false,
-      consumoSustancias:
-        data.saludFisica?.consumeDrogas ||
-        data.saludFisica?.frecuenciaAlcohol === 'diario' ||
-        data.saludFisica?.frecuenciaAlcohol === 'frecuente',
-      aislamientoSocial: data.psicologicos?.tieneRedApoyo === false || data.socioeconomicos?.viveSolo === true,
+      ideacionSuicidaPhq9: rawBody.phq9?.ideacionSuicida,
+      intentoPrevio: rawBody.cssrs?.intentoPrevio || hist.numIntentosPrevios > 0,
+      consumoSustancias: salud.consumeDrogas || ['frecuente', 'diario'].includes(salud.frecuenciaAlcohol),
+      aislamientoSocial: rel.viveSolo || rel.numPersonasConfianza === 0 || psico.tieneRedApoyo === false,
       violenciaReciente:
-        data.psicologicos?.violenciaFisica ||
-        data.psicologicos?.violenciaPsicologica ||
-        data.psicologicos?.abusoSexual ||
-        data.psicologicos?.bullying,
+        psico.violenciaFisica ||
+        psico.violenciaPsicologica ||
+        psico.abusoSexual ||
+        eventos.includes('violencia_fisica') ||
+        eventos.includes('violencia_psicologica') ||
+        eventos.includes('abuso_sexual') ||
+        eventos.includes('bullying'),
       perdidaReciente:
-        data.psicologicos?.perdidaFamiliarReciente ||
-        data.psicologicos?.ruptureParejaReciente ||
-        data.psicologicos?.desempleoReciente,
+        psico.perdidaFamiliarReciente ||
+        eventos.includes('perdida_familiar') ||
+        eventos.includes('ruptura_pareja') ||
+        eventos.includes('desempleo'),
     })
 
-    // 3. Persistencia en transacción atómica de base de datos
+    const edad = Number(rawBody.edad) || 25
+    const sexo = String(rawBody.sexo || 'otro')
+
+    // 7. Inserción atómica en base de datos
     const encuestaCreada = await prisma.encuesta.create({
       data: {
         usuarioId: usuarioId || null,
-        edad: data.edad,
-        sexo: data.sexo,
-        estadoCivil: data.estadoCivil,
-        nivelEducativo: data.nivelEducativo,
-        ocupacion: data.ocupacion,
-        ingresoMensual: data.ingresoMensual,
-        zonaResidencia: data.zonaResidencia,
-        estadoUsuario: data.estadoUsuario || 'vivo',
-        causaFallecimiento: data.causaFallecimiento,
-        fallecimientoVoluntario: data.fallecimientoVoluntario,
-        fechaFallecimiento: data.fechaFallecimiento ? new Date(data.fechaFallecimiento) : null,
+        nombre: rawBody.nombre ? String(rawBody.nombre).trim() : null,
+        apellido: rawBody.apellido ? String(rawBody.apellido).trim() : null,
+        edad,
+        sexo,
+        estadoCivil: rawBody.estadoCivil || null,
+        nivelEducativo: rawBody.nivelEducativo || null,
+        ocupacion: rawBody.ocupacion || null,
+        ingresoMensual: rawBody.ingresoMensual || null,
+        zonaResidencia: rawBody.zonaResidencia || null,
+        estadoUsuario: rawBody.estadoUsuario || 'vivo',
 
         // PHQ-9
-        phq9: data.phq9 && phq9Calc
-          ? {
-              create: {
-                ...data.phq9,
-                puntajeTotal: phq9Calc.puntajeTotal,
-                nivelGravedad: phq9Calc.nivelGravedad,
-              },
-            }
-          : undefined,
+        ...(rawBody.phq9 && phq9Calc && {
+          phq9: {
+            create: {
+              interesActividades: Number(rawBody.phq9.interesActividades) || 0,
+              estadoAnimo: Number(rawBody.phq9.estadoAnimo) || 0,
+              sueno: Number(rawBody.phq9.sueno) || 0,
+              energia: Number(rawBody.phq9.energia) || 0,
+              apetito: Number(rawBody.phq9.apetito) || 0,
+              autoestima: Number(rawBody.phq9.autoestima) || 0,
+              concentracion: Number(rawBody.phq9.concentracion) || 0,
+              psicomotricidad: Number(rawBody.phq9.psicomotricidad) || 0,
+              ideacionSuicida: Number(rawBody.phq9.ideacionSuicida) || 0,
+              dificultadFuncionamiento: Number(rawBody.phq9.dificultadFuncionamiento) || 0,
+              puntajeTotal: phq9Calc.puntajeTotal,
+              nivelGravedad: phq9Calc.nivelGravedad,
+            },
+          },
+        }),
 
         // C-SSRS
-        cssrs: data.cssrs
-          ? {
-              create: {
-                ...data.cssrs,
-                fechaUltimoIntento: data.cssrs.fechaUltimoIntento ? new Date(data.cssrs.fechaUltimoIntento) : null,
-                nivelSeveridad: cssrsCalc.nivelSeveridad,
-              },
-            }
-          : undefined,
+        ...(rawBody.cssrs && {
+          cssrs: {
+            create: {
+              deseosMorir: !!rawBody.cssrs.deseosMorir,
+              pensamientosSuicidas: !!rawBody.cssrs.pensamientosSuicidas,
+              metodoSinPlan: !!rawBody.cssrs.metodoSinPlan,
+              intencionSinPlan: !!rawBody.cssrs.intencionSinPlan,
+              planEspecifico: !!rawBody.cssrs.planEspecifico,
+              intencionEjecutar: !!rawBody.cssrs.intencionEjecutar,
+              intentoPrevio: !!rawBody.cssrs.intentoPrevio,
+              nivelSeveridad: cssrsCalc.nivelSeveridad,
+            },
+          },
+        }),
 
         // BHS
-        bhs: data.bhs && bhsCalc
-          ? {
-              create: {
-                ...data.bhs,
-                puntajeTotal: bhsCalc.puntajeTotal,
-                nivelRiesgo: bhsCalc.nivelRiesgo,
-              },
-            }
-          : undefined,
+        ...(bhsArray.length > 0 && bhsCalc && {
+          bhs: {
+            create: {
+              item1: !!bhsArray[0], item2: !!bhsArray[1], item3: !!bhsArray[2], item4: !!bhsArray[3], item5: !!bhsArray[4],
+              item6: !!bhsArray[5], item7: !!bhsArray[6], item8: !!bhsArray[7], item9: !!bhsArray[8], item10: !!bhsArray[9],
+              item11: !!bhsArray[10], item12: !!bhsArray[11], item13: !!bhsArray[12], item14: !!bhsArray[13], item15: !!bhsArray[14],
+              item16: !!bhsArray[15], item17: !!bhsArray[16], item18: !!bhsArray[17], item19: !!bhsArray[18], item20: !!bhsArray[19],
+              puntajeTotal: bhsCalc.puntajeTotal,
+              nivelRiesgo: bhsCalc.nivelRiesgo,
+            },
+          },
+        }),
 
         // Rosenberg
-        rosenberg: data.rosenberg
-          ? {
-              create: {
-                ...data.rosenberg,
-              },
-            }
-          : undefined,
+        ...(rosenbergArray.length > 0 && {
+          rosenberg: {
+            create: {
+              item1: rosenbergArray[0] || 2,
+              item2: rosenbergArray[1] || 2,
+              item3: rosenbergArray[2] || 2,
+              item4: rosenbergArray[3] || 2,
+              item5: rosenbergArray[4] || 2,
+              item6: rosenbergArray[5] || 2,
+              item7: rosenbergArray[6] || 2,
+              item8: rosenbergArray[7] || 2,
+              item9: rosenbergArray[8] || 2,
+              item10: rosenbergArray[9] || 2,
+            },
+          },
+        }),
 
         // DASS-21
-        dass21: data.dass21 && dass21Calc
-          ? {
-              create: {
-                ...data.dass21,
-                puntajeEstres: dass21Calc.puntajeEstres,
-                puntajeAnsiedad: dass21Calc.puntajeAnsiedad,
-                puntajeDepresion: dass21Calc.puntajeDepresion,
-              },
-            }
-          : undefined,
+        ...(dassArray.length > 0 && dass21Calc && {
+          dass21: {
+            create: {
+              item1: dassArray[0] || 0, item2: dassArray[1] || 0, item3: dassArray[2] || 0,
+              item4: dassArray[3] || 0, item5: dassArray[4] || 0, item6: dassArray[5] || 0,
+              item7: dassArray[6] || 0, item8: dassArray[7] || 0, item9: dassArray[8] || 0,
+              item10: dassArray[9] || 0, item11: dassArray[10] || 0, item12: dassArray[11] || 0,
+              item13: dassArray[12] || 0, item14: dassArray[13] || 0, item15: dassArray[14] || 0,
+              item16: dassArray[15] || 0, item17: dassArray[16] || 0, item18: dassArray[17] || 0,
+              item19: dassArray[18] || 0, item20: dassArray[19] || 0, item21: dassArray[20] || 0,
+              puntajeEstres: dass21Calc.puntajeEstres,
+              puntajeAnsiedad: dass21Calc.puntajeAnsiedad,
+              puntajeDepresion: dass21Calc.puntajeDepresion,
+            },
+          },
+        }),
 
-        // Factores Socioeconómicos
-        socioeconomicos: data.socioeconomicos
-          ? {
-              create: {
-                ...data.socioeconomicos,
-              },
-            }
-          : undefined,
+        // Socioeconómicos y Relaciones
+        ...((rawBody.socioeconomicos || rawBody.relaciones) && {
+          socioeconomicos: {
+            create: {
+              estadoLaboral: socio.estadoLaboral || null,
+              satisfaccionLaboral: socio.satisfaccionLaboral ? Number(socio.satisfaccionLaboral) : null,
+              estresLaboral: socio.estresLaboral ? Number(socio.estresLaboral) : null,
+              nivelDeudas: socio.nivelDeudas || null,
+              dificultadEconomica: socio.dificultadEconomica !== undefined ? Boolean(socio.dificultadEconomica) : null,
+              calidadRelacionesFamiliares: rel.calidadRelacionesFamiliares ? Number(rel.calidadRelacionesFamiliares) : null,
+              calidadRelacionesPareja: rel.calidadRelacionesPareja ? Number(rel.calidadRelacionesPareja) : null,
+              apoyoSocialPercibido: rel.apoyoSocialPercibido ? Number(rel.apoyoSocialPercibido) : null,
+              numPersonasConfianza: rel.numPersonasConfianza !== undefined ? Number(rel.numPersonasConfianza) : null,
+              viveSolo: rel.viveSolo !== undefined ? Boolean(rel.viveSolo) : null,
+              tipoVivienda: socio.tipoVivienda || null,
+              calidadVivienda: socio.calidadVivienda ? Number(socio.calidadVivienda) : null,
+            },
+          },
+        }),
 
         // Salud Física
-        saludFisica: data.saludFisica
-          ? {
-              create: {
-                ...data.saludFisica,
-              },
-            }
-          : undefined,
+        ...(rawBody.saludFisica && {
+          saludFisica: {
+            create: {
+              enfermedadCronica: Boolean(salud.enfermedadCronica),
+              dolorCronico: Boolean(salud.dolorCronico),
+              calidadSueno: Number(salud.calidadSueno) || 3,
+              horasSuenoPromedio: salud.horasSuenoPromedio !== undefined ? Number(salud.horasSuenoPromedio) : null,
+              insomnio: Boolean(salud.insomnio),
+              consumeAlcohol: Boolean(salud.consumeAlcohol),
+              frecuenciaAlcohol: salud.frecuenciaAlcohol || 'nunca',
+              consumeTabaco: Boolean(salud.consumeTabaco),
+              frecuenciaTabaco: salud.frecuenciaTabaco || 'nunca',
+              consumeDrogas: Boolean(salud.consumeDrogas),
+              tipoDrogas: salud.tipoDrogas || null,
+            },
+          },
+        }),
 
         // Factores Psicológicos
-        psicologicos: data.psicologicos
-          ? {
-              create: {
-                ...data.psicologicos,
-              },
-            }
-          : undefined,
+        ...((rawBody.psicologicos || rawBody.relaciones) && {
+          psicologicos: {
+            create: {
+              tieneRedApoyo: Boolean(psico.tieneRedApoyo ?? rel.tieneRedApoyo ?? true),
+              percibeVidaConSentido: Boolean(psico.percibeVidaConSentido ?? true),
+              haBuscadoAyudaProfesional: Boolean(psico.haBuscadoAyudaProfesional ?? false),
+              perdidaFamiliarReciente: Boolean(psico.perdidaFamiliarReciente || eventos.includes('perdida_familiar')),
+              violenciaFisica: Boolean(psico.violenciaFisica || eventos.includes('violencia_fisica')),
+              violenciaPsicologica: Boolean(psico.violenciaPsicologica || eventos.includes('violencia_psicologica')),
+              abusoSexual: Boolean(psico.abusoSexual || eventos.includes('abuso_sexual')),
+              bullying: Boolean(psico.bullying || eventos.includes('bullying')),
+              desempleoReciente: Boolean(psico.desempleoReciente || eventos.includes('desempleo')),
+              ruptureParejaReciente: Boolean(psico.ruptureParejaReciente || eventos.includes('ruptura_pareja')),
+              problemaLegalReciente: Boolean(psico.problemaLegalReciente || eventos.includes('problemas_legales')),
+            },
+          },
+        }),
 
-        // Historial Intentos
-        historial: data.historial
-          ? {
-              create: {
-                ...data.historial,
-                ultimoIntentoFecha: data.historial.ultimoIntentoFecha ? new Date(data.historial.ultimoIntentoFecha) : null,
-              },
-            }
-          : undefined,
-
-        // Notificación automática al equipo clínico
+        // Notificación de triaje automático para el equipo clínico
         notificaciones: {
           create: {
             tipoRiesgo: riesgoGlobal.nivelRiesgo,
-            titulo: `Alerta ${riesgoGlobal.prioridadAlerta.toUpperCase()}: Paciente (${data.edad} años, ${data.sexo})`,
+            titulo: `Alerta ${riesgoGlobal.prioridadAlerta.toUpperCase()}: ${rawBody.nombre ? `${rawBody.nombre} ${rawBody.apellido || ''}`.trim() : 'Paciente'} (${edad} años, ${sexo})`,
             descripcion: `Puntaje compuesto: ${riesgoGlobal.puntajeRiesgo}. Factores clave: ${
               riesgoGlobal.factoresAlarma.slice(0, 3).join('; ') || 'Evaluación rutinaria'
             }. SLA de atención: ${riesgoGlobal.slaHoras}h.`,
@@ -180,7 +283,6 @@ export class EncuestaService {
         socioeconomicos: true,
         saludFisica: true,
         psicologicos: true,
-        historial: true,
         notificaciones: true,
       },
     })
@@ -231,24 +333,19 @@ export class EncuestaService {
   }
 
   /**
-   * Lista encuestas con paginación, filtros por riesgo y búsqueda
+   * Lista encuestas con paginación y búsqueda
    */
   static async listarEncuestas(params: {
     page?: number
     limit?: number
     nivelRiesgo?: string
     busqueda?: string
-    soloAnonimas?: boolean
   }) {
     const page = Math.max(1, params.page || 1)
     const limit = Math.min(100, Math.max(5, params.limit || 20))
     const skip = (page - 1) * limit
 
     const where: Record<string, unknown> = {}
-
-    if (params.soloAnonimas) {
-      where.usuarioId = null
-    }
 
     if (params.busqueda) {
       const searchNumber = parseInt(params.busqueda, 10)
@@ -257,7 +354,6 @@ export class EncuestaService {
         { nombre: { contains: params.busqueda, mode: 'insensitive' } },
         { apellido: { contains: params.busqueda, mode: 'insensitive' } },
         { ocupacion: { contains: params.busqueda, mode: 'insensitive' } },
-        { usuario: { alias: { contains: params.busqueda, mode: 'insensitive' } } },
       ]
     }
 
@@ -267,7 +363,7 @@ export class EncuestaService {
         where,
         skip,
         take: limit,
-        orderBy: { fechaCreacion: 'desc' },
+        orderBy: { createdAt: 'desc' },
         include: {
           usuario: { select: { id: true, alias: true } },
           phq9: { select: { puntajeTotal: true, nivelGravedad: true, ideacionSuicida: true } },

@@ -1,17 +1,12 @@
 import { NextResponse } from 'next/server'
 import { EncuestaService } from '@/services/encuesta.service'
-import { EncuestaSchema } from '@/validators/encuesta'
 
 export async function POST(request: Request) {
   try {
     const rawBody = await request.json()
     const usuarioId = rawBody.usuarioId ? Number(rawBody.usuarioId) : null
 
-    // Validación y sanitización básica del payload
-    const parsedData = EncuestaSchema.safeParse(rawBody)
-    const dataToSave = parsedData.success ? parsedData.data : rawBody
-
-    const result = await EncuestaService.crearEncuesta(dataToSave, usuarioId)
+    const result = await EncuestaService.crearEncuesta(rawBody, usuarioId)
 
     // Unwrapping para compatibilidad con la vista
     const unwrapped = {
