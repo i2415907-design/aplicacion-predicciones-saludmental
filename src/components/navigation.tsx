@@ -21,6 +21,7 @@ const authItems = [
 
 const adminItems = [
   { href: "/admin", label: "Panel Admin" },
+  { href: "/admin/diapositivas", label: "Diapositivas" },
 ]
 
 export function Navigation() {

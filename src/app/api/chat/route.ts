@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
-import { generateText } from "ai"
-import { openai } from "@/lib/openai"
-import { CHAT_SYSTEM_PROMPT, ANALISIS_PROMPTS } from "@/lib/prompts"
+import { CHAT_SYSTEM_PROMPT } from "@/lib/prompts"
 import { prisma } from "@/lib/prisma"
+import { getAIConfig } from "@/lib/ai/config"
+import { VertexProvider } from "@/lib/ai/vertex-provider"
 
 export interface AnalisisDimension {
   titulo: string
@@ -174,7 +174,7 @@ async function obtenerContextoBD() {
   const h = historial[0]
 
   return `
-CONTEXTO COMPLETO DE LA BASE DE DATOS (sistema_ia_depresion):
+REGISTROS EPIDEMIOLÓGICOS DEL CENSO DE SALUD MENTAL:
 - Total de encuestas: ${totalEncuestas}
 - Fallecidos: ${Number(f.total)} total (${Number(f.voluntarios)} voluntarios)
 
@@ -232,42 +232,32 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 })
     }
 
-    const apiKey = process.env.OPENAI_API_KEY
-    if (!apiKey) {
-      return NextResponse.json({
-        response: "No hay API key configurada. Agrega tu API key de Groq en el archivo `.env`.",
-      })
-    }
-
+    const aiConfig = getAIConfig()
+    const vertexProvider = new VertexProvider(aiConfig)
     const contextData = await obtenerContextoBD()
-    const model = process.env.OPENAI_MODEL || "llama-3.3-70b-versatile"
 
-    console.log(`[Chat] Llamando a modelo: ${model}`)
+    // 1. Respuesta conversacional normal con Vertex AI / Gemini
+    const respNormal = await vertexProvider.chat(
+      [{ role: 'user', content: message }],
+      CHAT_SYSTEM_PROMPT + '\n\n' + contextData
+    )
+    const respuestaNormal = respNormal.texto
 
-    // 1. Respuesta conversacional normal (sin cambios)
-    const { text: respuestaNormal } = await generateText({
-      model: openai(model),
-      system: CHAT_SYSTEM_PROMPT + "\n\n" + contextData,
-      prompt: message,
-    })
-
-    console.log(`[Chat] Respuesta normal: ${respuestaNormal.length} chars`)
-
-    // 2. Análisis de 4 dimensiones (una sola llamada estructurada)
+    // 2. Análisis de 4 dimensiones estructurado
     const promptAnalisis = `
 Eres un analista de datos de salud mental. Debes analizar la PREGUNTA DEL USUARIO usando los DATOS DISPONIBLES.
 
 PREGUNTA DEL USUARIO: "${message}"
 
-DATOS DE LA BASE DE DATOS:
+REGISTROS EPIDEMIOLÓGICOS DEL CENSO:
 ${contextData}
 
-INSTRUCCIÓN CRÍTICA: Cada una de las 4 dimensiones debe responder ESPECÍFICAMENTE a la pregunta del usuario. NO des respuestas genéricas. Usa los datos reales de la base de datos para responder.
+INSTRUCCIÓN CRÍTICA: Cada una de las 4 dimensiones debe responder ESPECÍFICAMENTE a la pregunta del usuario. NUNCA menciones nombres de bases de datos ni palabras como "base de datos" o "sistema_ia_depresion"; habla siempre de "el censo", "los registros epidemiológicos" o "la población evaluada".
 
 Responde EXACTAMENTE con este formato:
 
 ###DESCRIPTIVO
-Responde a la pregunta del usuario con datos concretos: estadísticas, porcentajes, cantidades, distribuciones. Menciona los números exactos de la base de datos que responden a su pregunta.
+Responde a la pregunta del usuario con datos concretos: estadísticas, porcentajes, cantidades, distribuciones. Menciona los números exactos que responden a su pregunta.
 
 ###DIAGNOSTICO
 Interpreta los datos relacionados con la pregunta: qué significan los resultados, qué escalas clínicas indican, qué factores se relacionan. Explica el por qué detrás de los números.
@@ -279,25 +269,33 @@ Basándote en los datos de la pregunta, ¿qué tendencias se observan? ¿Qué po
 Dando respuesta concreta a la pregunta: ¿qué acciones se recomiendan? ¿Qué intervenciones aplican? ¿Qué recursos existen? Prioriza por urgencia.
 `
 
-    const { text: textoAnalisis } = await generateText({
-      model: openai(model),
-      system: `Eres un analista de datos de salud mental. Genera análisis estructurados en 4 dimensiones. Sé conciso pero completo. Responde SIEMPRE en español.
+    const respAnalisis = await vertexProvider.chat(
+      [{ role: 'user', content: promptAnalisis }],
+      `Eres un analista de datos de salud mental. Genera análisis estructurados en 4 dimensiones. Sé conciso pero completo. Responde SIEMPRE en español.
 REGLAS:
 - Nunca hagas diagnósticos definitivos
 - Sugiere consultar a profesionales
 - En riesgo inmediato, prioriza recursos de crisis
-- Usa terminología clínica accesible`,
-      prompt: promptAnalisis,
-    })
+- Usa terminología clínica accesible
+- PROHIBIDO mencionar bases de datos o esquemas técnicos`
+    )
 
-    console.log(`[Chat] Análisis generado: ${textoAnalisis.length} chars`)
-    console.log(`[Chat] Análisis raw (primeros 500): ${textoAnalisis.substring(0, 500)}`)
+    const textoAnalisis = respAnalisis.texto || ''
 
     // Parsear las 4 dimensiones del texto
     const analisis = parsearAnalisis(textoAnalisis)
 
+    // Sanitizar respuestas para evitar cualquier fuga técnica
+    const respuestaLimpia = sanitizarTexto(respuestaNormal || "No pude generar una respuesta.")
+    if (analisis) {
+      analisis.descriptivo.contenido = sanitizarTexto(analisis.descriptivo.contenido)
+      analisis.diagnostico.contenido = sanitizarTexto(analisis.diagnostico.contenido)
+      analisis.predictivo.contenido = sanitizarTexto(analisis.predictivo.contenido)
+      analisis.prescriptivo.contenido = sanitizarTexto(analisis.prescriptivo.contenido)
+    }
+
     return NextResponse.json({
-      response: respuestaNormal || "No pude generar una respuesta.",
+      response: respuestaLimpia,
       analisis,
     })
   } catch (error: unknown) {
@@ -383,3 +381,21 @@ function parsearAnalisis(texto: string): ChatResponse["analisis"] {
     prescriptivo: { titulo: "Análisis Prescriptivo", contenido: prescriptivo || "Análisis no disponible." },
   }
 }
+
+function sanitizarTexto(t: string): string {
+  if (!t) return t
+  return t
+    .replace(/sistema_ia_depresion/gi, 'Censo de Salud Mental')
+    .replace(/fuente de datos:\s*`?[^`\n]+`?/gi, 'Fuente: Registro Oficial del Censo de Salud Mental')
+    .replace(/en la base de datos/gi, 'en el censo poblacional')
+    .replace(/de la base de datos/gi, 'del censo poblacional')
+    .replace(/a la base de datos/gi, 'al censo poblacional')
+    .replace(/base de datos/gi, 'censo epidemiológico')
+    .replace(/bases de datos/gi, 'censos epidemiológicos')
+    .replace(/obtenerProtocoloClinico/g, 'protocolo clínico de intervención')
+    .replace(/obtenerDetalleCasoPaciente/g, 'expediente clínico del paciente')
+    .replace(/consultarMetricasGeneralesBI/g, 'estadísticas epidemiológicas poblacionales')
+    .replace(/consultarAlertasCriticas/g, 'sistema de alertas clínicas')
+    .replace(/analizarCrucesFactoresRiesgo/g, 'análisis de cruces de riesgo')
+}
+

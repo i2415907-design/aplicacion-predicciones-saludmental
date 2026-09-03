@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Search, Filter, ChevronLeft, ChevronRight, Eye, AlertTriangle, Download, Archive, Tag } from 'lucide-react'
+import { Search, Filter, ChevronLeft, ChevronRight, Eye, AlertTriangle, Download, Archive, Tag, Bot } from 'lucide-react'
 import Link from 'next/link'
 import { generarPdf } from '@/lib/pdf-generator'
 import { ArchivarModal } from '@/components/admin/archivar-modal'
+import { ConsultaIaModal } from '@/components/admin/consulta-ia-modal'
 
 interface Categoria {
   id: number
@@ -44,6 +45,7 @@ export default function AdminEncuestasPage() {
   const [categoriaFilter, setCategoriaFilter] = useState('')
   const [categorias, setCategorias] = useState<Categoria[]>([])
   const [archiveModal, setArchiveModal] = useState<{ encuestaId: number; casos: Encuesta['categorias'] } | null>(null)
+  const [aiModal, setAiModal] = useState<{ isOpen: boolean; encuestaId: number | null }>({ isOpen: false, encuestaId: null })
 
   useEffect(() => {
     fetch('/api/admin/categorias')
@@ -127,10 +129,19 @@ export default function AdminEncuestasPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Historial de Encuestas</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {pagination?.total || 0} encuestas en total
-        </p>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Historial de Encuestas</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {pagination?.total || 0} encuestas evaluadas en el sistema
+          </p>
+        </div>
+        <button
+          onClick={() => setAiModal({ isOpen: true, encuestaId: null })}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors"
+        >
+          <Bot className="w-4 h-4" />
+          <span>Consultor de Triage IA</span>
+        </button>
       </div>
 
       {/* Filters */}
@@ -246,24 +257,32 @@ export default function AdminEncuestasPage() {
                       {new Date(encuesta.fechaCreacion).toLocaleDateString('es-CO')}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <button
+                          onClick={() => setAiModal({ isOpen: true, encuestaId: encuesta.id })}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 rounded-lg transition-colors"
+                          title="Triage Clínico con IA"
+                        >
+                          <Bot className="w-3.5 h-3.5" />
+                          <span>Triage IA</span>
+                        </button>
                         <Link
                           href={`/encuesta/${encuesta.id}`}
-                          className="inline-flex items-center gap-1 px-2 py-1.5 text-sm text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
-                          title="Ver detalle"
+                          className="inline-flex items-center gap-1 p-1.5 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          title="Ver detalle completo"
                         >
                           <Eye className="w-4 h-4" />
                         </Link>
                         <button
                           onClick={() => handleDownloadPdf(encuesta)}
-                          className="inline-flex items-center gap-1 px-2 py-1.5 text-sm text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+                          className="inline-flex items-center gap-1 p-1.5 text-sm text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg transition-colors"
                           title="Descargar PDF"
                         >
                           <Download className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setArchiveModal({ encuestaId: encuesta.id, casos: encuesta.categorias })}
-                          className="inline-flex items-center gap-1 px-2 py-1.5 text-sm text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"
+                          className="inline-flex items-center gap-1 p-1.5 text-sm text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-lg transition-colors"
                           title="Archivar caso"
                         >
                           <Archive className="w-4 h-4" />
@@ -302,6 +321,7 @@ export default function AdminEncuestasPage() {
           </div>
         )}
       </div>
+
       {/* Archive Modal */}
       {archiveModal && (
         <ArchivarModal
@@ -317,6 +337,13 @@ export default function AdminEncuestasPage() {
           onClose={() => setArchiveModal(null)}
         />
       )}
+
+      {/* Consulta IA Modal */}
+      <ConsultaIaModal
+        isOpen={aiModal.isOpen}
+        onClose={() => setAiModal({ isOpen: false, encuestaId: null })}
+        encuestaId={aiModal.encuestaId}
+      />
     </div>
   )
 }

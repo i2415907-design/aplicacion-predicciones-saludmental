@@ -258,3 +258,191 @@ export function generarPdf(data: PdfData) {
   // Save
   doc.save(`encuesta_${data.id}_${nombre.replace(/\s+/g, '_')}.pdf`)
 }
+
+export interface InformeIaData {
+  titulo: string
+  subtitulo?: string
+  profesional?: string
+  fecha?: string
+  paciente?: {
+    id?: number
+    nombre?: string | null
+    apellido?: string | null
+    edad?: number
+    sexo?: string
+    phq9Nivel?: string
+    cssrsNivel?: string
+    bhsNivel?: string
+  }
+  consultas: Array<{
+    pregunta?: string
+    respuesta: string
+    timestamp?: string
+  }>
+}
+
+export function generarPdfInformeIa(data: InformeIaData) {
+  const doc = new jsPDF()
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const marginLeft = 18
+  const marginRight = 18
+  const contentWidth = pageWidth - marginLeft - marginRight
+  let y = 18
+
+  const checkPageBreak = (neededHeight: number) => {
+    if (y + neededHeight > pageHeight - 25) {
+      doc.addPage()
+      y = 20
+      return true
+    }
+    return false
+  }
+
+  // 1. Cabecera Institucional
+  doc.setFillColor(30, 41, 59) // Slate 800
+  doc.rect(0, 0, pageWidth, 28, 'F')
+
+  doc.setFontSize(13)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(255, 255, 255)
+  doc.text('CENTRO DE ATENCIÓN Y EVALUACIÓN EN SALUD MENTAL', marginLeft, 12)
+
+  doc.setFontSize(8.5)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(203, 213, 225) // Slate 300
+  doc.text('Informe Asistido por Inteligencia Artificial Clínica · Uso Confidencial Exclusivo', marginLeft, 19)
+
+  y = 36
+
+  // 2. Título del Documento y Metadatos
+  doc.setFontSize(14)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(15, 23, 42)
+  doc.text(data.titulo.toUpperCase(), marginLeft, y)
+  y += 6
+
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(100, 116, 139)
+  const fechaStr = data.fecha || new Date().toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' })
+  doc.text(`Fecha y hora de emisión: ${fechaStr}`, marginLeft, y)
+  y += 4.5
+  doc.text(`Profesional / Médico de turno: ${data.profesional || 'Psicólogo de Turno'}`, marginLeft, y)
+  y += 7
+
+  // 3. Ficha del Paciente (si está presente)
+  if (data.paciente) {
+    checkPageBreak(30)
+    doc.setFillColor(248, 250, 252) // Slate 50
+    doc.setDrawColor(226, 232, 240)
+    doc.roundedRect(marginLeft, y, contentWidth, 22, 2, 2, 'FD')
+
+    const p = data.paciente
+    const pNombre = `${p.nombre || 'Paciente'} ${p.apellido || ''}`.trim()
+
+    doc.setFontSize(9.5)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(30, 41, 59)
+    doc.text(`PACIENTE: ${pNombre} (ID #${p.id || 'N/A'})`, marginLeft + 4, y + 6)
+
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(71, 85, 105)
+    doc.text(`Edad: ${p.edad ?? 'N/A'} años   |   Sexo: ${p.sexo ?? 'N/A'}`, marginLeft + 4, y + 12)
+
+    const escalasStr = [
+      p.phq9Nivel ? `PHQ-9: ${p.phq9Nivel}` : null,
+      p.cssrsNivel ? `C-SSRS: ${p.cssrsNivel}` : null,
+      p.bhsNivel ? `BHS: ${p.bhsNivel}` : null,
+    ].filter(Boolean).join('   |   ')
+
+    if (escalasStr) {
+      doc.text(`Escalas Psicométricas: ${escalasStr}`, marginLeft + 4, y + 17)
+    }
+
+    y += 28
+  }
+
+  // 4. Contenido Clínico de las Consultas / Evaluaciones
+  data.consultas.forEach((c, idx) => {
+    // Si hay pregunta o consulta específica
+    if (c.pregunta) {
+      checkPageBreak(18)
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(79, 70, 229) // Indigo 600
+      doc.text(`CONSULTA #${idx + 1}:`, marginLeft, y)
+      y += 4.5
+
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(30, 41, 59)
+      const qLines = doc.splitTextToSize(c.pregunta, contentWidth)
+      doc.text(qLines, marginLeft, y)
+      y += qLines.length * 4.2 + 4
+    }
+
+    // Respuesta / Triage de la IA
+    checkPageBreak(25)
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(15, 23, 42)
+    doc.text('EVALUACIÓN CLÍNICA Y RECOMENDACIONES (COPILOTO IA):', marginLeft, y)
+    y += 5
+
+    // Sanitizar texto markdown antes de imprimir
+    const cleanContent = c.respuesta
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/###\s*(.*)/g, '$1')
+      .replace(/##\s*(.*)/g, '$1')
+      .replace(/#\s*(.*)/g, '$1')
+      .replace(/`([^`]+)`/g, '$1')
+      .trim()
+
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(51, 65, 85)
+
+    const rLines = doc.splitTextToSize(cleanContent, contentWidth)
+    for (let i = 0; i < rLines.length; i++) {
+      if (checkPageBreak(6)) {
+        doc.setFontSize(8.5)
+        doc.setFont('helvetica', 'normal')
+        doc.setTextColor(51, 65, 85)
+      }
+      doc.text(rLines[i], marginLeft, y)
+      y += 4.3
+    }
+
+    y += 6
+  })
+
+  // 5. Firma del Profesional y Descargo Médico-Legal
+  checkPageBreak(40)
+  y += 8
+  doc.setDrawColor(148, 163, 184)
+  doc.line(marginLeft + 20, y + 10, marginLeft + 100, y + 10)
+
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(71, 85, 105)
+  doc.text(`Firma y Sello: ${data.profesional || 'Psicólogo / Médico de Turno'}`, marginLeft + 20, y + 15)
+  doc.setFont('helvetica', 'normal')
+  doc.text('Servicio de Triage y Salud Mental', marginLeft + 20, y + 19)
+
+  y += 28
+
+  // Descargo
+  doc.setFontSize(7)
+  doc.setFont('helvetica', 'italic')
+  doc.setTextColor(148, 163, 184)
+  const legalLines = doc.splitTextToSize(
+    'AVISO CLÍNICO LEGAL: Este informe ha sido emitido mediante el Copiloto de Inteligencia Artificial para el soporte a la toma de decisiones y triage preventivo. Sus conclusiones orientan la priorización asistencial y no reemplazan la anamnesis formal ni el diagnóstico médico presencial.',
+    contentWidth
+  )
+  doc.text(legalLines, marginLeft, y)
+
+  // Guardar archivo
+  const filePrefix = data.paciente?.id ? `Informe_Paciente_${data.paciente.id}` : 'Informe_Consulta_Clinica'
+  doc.save(`${filePrefix}_${Date.now()}.pdf`)
+}

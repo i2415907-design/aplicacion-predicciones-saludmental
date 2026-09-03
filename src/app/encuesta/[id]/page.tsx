@@ -20,6 +20,7 @@ interface EncuestaData {
   nivelEducativo?: string
   estadoUsuario: string
   createdAt: string
+  satisfaccion?: number | null
   phq9?: {
     puntajeTotal: number
     nivelGravedad: string
@@ -348,9 +349,42 @@ export default function EncuestaResultadoPage() {
         </div>
       </div>
 
-      {/* Encuesta de satisfacción */}
+      {/* Encuesta de satisfacción / Valoración de experiencia */}
       <div className="mt-6">
-        <SatisfaccionEncuesta encuestaId={encuesta.id} />
+        {isAdmin ? (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <span>Valoración de Experiencia del Encuestado</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
+                    Solo Lectura (Admin)
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Calificación emitida por el participante tras completar la evaluación psicométrica.
+                </p>
+              </div>
+
+              {encuesta.satisfaccion ? (
+                <div className="flex items-center gap-2 px-3.5 py-2 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl">
+                  <span className="text-base font-bold text-amber-500">
+                    {'★'.repeat(encuesta.satisfaccion)}{'☆'.repeat(5 - encuesta.satisfaccion)}
+                  </span>
+                  <span className="text-xs font-bold text-amber-800 dark:text-amber-300">
+                    {encuesta.satisfaccion} / 5
+                  </span>
+                </div>
+              ) : (
+                <span className="text-xs font-medium text-slate-400 italic px-3 py-1.5 bg-slate-50 dark:bg-slate-800/60 rounded-lg border border-slate-200/60 dark:border-slate-700/60">
+                  Sin valoración registrada aún
+                </span>
+              )}
+            </div>
+          </div>
+        ) : (
+          <SatisfaccionEncuesta encuestaId={encuesta.id} />
+        )}
       </div>
     </div>
   )

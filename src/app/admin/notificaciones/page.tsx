@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react'
 import {
   Bell, BellOff, AlertTriangle, AlertCircle, Info, Clock,
-  MessageSquare, ChevronLeft, ChevronRight, User, FileText, Eye
+  MessageSquare, ChevronLeft, ChevronRight, User, FileText, Eye, Bot
 } from 'lucide-react'
+import { ConsultaIaModal } from '@/components/admin/consulta-ia-modal'
 
 interface Notificacion {
   id: number
@@ -92,6 +93,7 @@ export default function AdminNotificacionesPage() {
   const [selectedNotif, setSelectedNotif] = useState<Notificacion | null>(null)
   const [respuesta, setRespuesta] = useState('')
   const [pagina, setPagina] = useState(1)
+  const [aiModal, setAiModal] = useState<{ isOpen: boolean; encuestaId: number | null }>({ isOpen: false, encuestaId: null })
   const porPagina = 8
 
   useEffect(() => {
@@ -363,6 +365,7 @@ export default function AdminNotificacionesPage() {
               respuesta={respuesta}
               setRespuesta={setRespuesta}
               onSend={() => responderNotificacion(selectedNotif.id)}
+              onOpenAiModal={() => setAiModal({ isOpen: true, encuestaId: selectedNotif.encuesta.id })}
             />
           ) : (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-8 text-center sticky top-20">
@@ -375,6 +378,13 @@ export default function AdminNotificacionesPage() {
           )}
         </div>
       </div>
+
+      {/* Modal Consulta IA */}
+      <ConsultaIaModal
+        isOpen={aiModal.isOpen}
+        onClose={() => setAiModal({ isOpen: false, encuestaId: null })}
+        encuestaId={aiModal.encuestaId}
+      />
     </div>
   )
 }
@@ -384,11 +394,13 @@ function DetailPanel({
   respuesta,
   setRespuesta,
   onSend,
+  onOpenAiModal,
 }: {
   notif: Notificacion
   respuesta: string
   setRespuesta: (v: string) => void
   onSend: () => void
+  onOpenAiModal: () => void
 }) {
   const config = getRiesgoConfig(notif.tipoRiesgo)
   const Icon = config.icon
@@ -421,6 +433,16 @@ function DetailPanel({
             </p>
           </div>
         </div>
+
+        {/* Action button to open AI modal */}
+        <button
+          type="button"
+          onClick={onOpenAiModal}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-xl text-xs font-semibold transition-colors shadow-xs"
+        >
+          <Bot className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+          <span>Consultar Triage con Copiloto IA</span>
+        </button>
 
         {/* Description */}
         <div>

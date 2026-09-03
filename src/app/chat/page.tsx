@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { ClinicalMarkdown } from "@/components/ui/clinical-markdown"
 
 interface AnalisisDimension {
   titulo: string
@@ -76,8 +77,8 @@ function PanelAnalisis({ analisis }: { analisis: AnalisisData }) {
       {/* Content */}
       <div className={`p-4 ${colors.bg}`}>
         <h4 className={`text-sm font-bold ${colors.text} mb-2`}>{data.titulo}</h4>
-        <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
-          {data.contenido}
+        <div className="text-sm leading-relaxed">
+          <ClinicalMarkdown content={data.contenido} />
         </div>
       </div>
     </div>
@@ -176,14 +177,18 @@ export default function ChatPage() {
                   }`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-lg p-3 ${
+                    className={`max-w-[85%] rounded-2xl p-3.5 ${
                       message.role === "user"
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                        ? "bg-indigo-600 text-white shadow-xs rounded-tr-none"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-tl-none"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap text-sm">
-                      {message.content}
+                    <div className="text-sm">
+                      {message.role === "user" ? (
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                      ) : (
+                        <ClinicalMarkdown content={message.content} />
+                      )}
                     </div>
                   </div>
                 </div>

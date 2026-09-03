@@ -5,13 +5,14 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { Shield, FileText, Bell, MessageSquare, LayoutDashboard } from 'lucide-react'
+import { Shield, FileText, Bell, Bot, LayoutDashboard, Presentation } from 'lucide-react'
 
 const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/encuestas', label: 'Encuestas', icon: FileText },
   { href: '/admin/notificaciones', label: 'Notificaciones', icon: Bell },
-  { href: '/admin/chatbot', label: 'Chatbot IA', icon: MessageSquare },
+  { href: '/admin/chatbot', label: 'Copiloto Clínico IA', icon: Bot },
+  { href: '/admin/diapositivas', label: 'Diapositivas', icon: Presentation },
 ]
 
 export default function AdminLayout({
@@ -41,6 +42,11 @@ export default function AdminLayout({
     return null
   }
 
+  // Si está en el modo de presentación de diapositivas, permitir lienzo completo inmersivo
+  if (pathname.startsWith('/admin/diapositivas')) {
+    return <>{children}</>
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Admin Header */}
@@ -48,12 +54,21 @@ export default function AdminLayout({
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-purple-600" />
+              <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               <span className="font-semibold text-gray-900 dark:text-gray-100">Panel de Administración</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Psicólogo de turno:</span>
-              <span className="font-medium text-gray-900 dark:text-gray-100">{user.alias}</span>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin/diapositivas"
+                className="px-3 py-1.5 bg-slate-900 dark:bg-black hover:bg-slate-800 text-slate-100 border border-slate-700 dark:border-slate-800 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs"
+              >
+                <Presentation className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Diapositivas</span>
+              </Link>
+              <div className="flex items-center gap-2 border-l border-slate-200 dark:border-slate-700 pl-3">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Psicólogo de turno:</span>
+                <span className="font-semibold text-indigo-700 dark:text-indigo-300">{user.alias}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -63,7 +78,7 @@ export default function AdminLayout({
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Navigation */}
           <aside className="lg:w-64 shrink-0">
-            <nav className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-2 sticky top-20">
+            <nav className="bg-white dark:bg-gray-900 rounded-xl shadow-xs p-2 sticky top-20 border border-slate-200/80 dark:border-slate-800">
               {adminNavItems.map((item) => {
                 const Icon = item.icon
                 const isActive = item.href === '/admin' 
@@ -77,7 +92,7 @@ export default function AdminLayout({
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700"
+                        ? "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 font-semibold"
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800"
                     )}
                   >

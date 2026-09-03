@@ -1,292 +1,533 @@
 'use client'
 
-import { useEffect, useState, useRef, useCallback } from 'react'
-import { Send, Bot, User, Bell, AlertTriangle } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import {
+  Send,
+  Bot,
+  User,
+  MessageSquare,
+  PlusCircle,
+  Trash2,
+  BarChart3,
+  ShieldAlert,
+  FileCheck2,
+  Sparkles,
+  FileDown,
+} from 'lucide-react'
+import { ClinicalMarkdown } from '@/components/ui/clinical-markdown'
+import { generarPdfInformeIa } from '@/lib/pdf-generator'
+import { useAuth } from '@/lib/auth-context'
 
 interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
   timestamp: Date
+  toolsUsed?: string[]
 }
 
-interface Notificacion {
+interface ConversacionResumen {
   id: number
-  tipoRiesgo: string
-  titulo: string
-  descripcion: string
-  accionRequerida: string | null
-  encuesta: {
-    id: number
-    nombre: string | null
-    apellido: string | null
-    edad: number
-    sexo: string
-  }
+  titulo: string | null
+  fechaInicio: string
+  totalMensajes: number
 }
 
 export default function AdminChatbotPage() {
-  const [messages, setMessages] = useState<Message[]>([{
-    id: '1',
-    role: 'assistant',
-    content: '¡Hola! Soy tu asistente de IA para psicólogos. Puedo ayudarte a:\n\n• Evaluar el riesgo de un paciente\n• Sugerir intervenciones apropiadas\n• Responder a notificaciones de alerta\n• Proporcionar información clínica relevante\n\nSelecciona una notificación de la lista o escribe tu pregunta.',
-    timestamp: new Date()
-  }])
+  const [conversaciones, setConversaciones] = useState<ConversacionResumen[]>([])
+  const [activeSessionId, setActiveSessionId] = useState<number | null>(null)
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 'welcome',
+      role: 'assistant',
+      content:
+        '¡Hola! Soy tu Copiloto Clínico y Asistente de Inteligencia Artificial para el equipo de salud mental.\n\nPuedo ayudarte con:\n• Evaluación y triage de expedientes clínicos según PHQ-9, C-SSRS y BHS.\n• Protocolos de intervención clínica y medidas de contención de crisis.\n• Consultas analíticas y estadísticas poblacionales de encuestas en tiempo real.\n\nEscribe cualquier consulta clínica o utiliza las acciones rápidas inferiores.',
+      timestamp: new Date(),
+    },
+  ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [notificaciones, setNotificaciones] = useState<Notificacion[]>([])
-  const [selectedNotif, setSelectedNotif] = useState<Notificacion | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const loadNotificaciones = useCallback(async () => {
+  const { user } = useAuth()
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+  const activeSessionRef = useRef<number | null>(null)
+
+  // Mantener sincronizada la referencia a la sesión activa
+  useEffect(() => {
+    activeSessionRef.current = activeSessionId
+  }, [activeSessionId])
+
+  // Scroll contenido al final sin provocar saltos en la ventana global
+  const scrollToBottom = useCallback(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
+  }, [])
+
+  const handleDescargarPdf = (mensajeEspecifico?: Message) => {
+    let consultasParaExportar: Array<{ pregunta?: string; respuesta: string; timestamp?: string }> = []
+
+    if (mensajeEspecifico) {
+      consultasParaExportar = [
+        {
+          respuesta: mensajeEspecifico.content,
+          timestamp: mensajeEspecifico.timestamp.toLocaleTimeString(),
+        },
+      ]
+    } else {
+      for (let i = 0; i < messages.length; i++) {
+        if (messages[i].role === 'assistant' && messages[i].id !== 'welcome') {
+          const userMsg = i > 0 && messages[i - 1].role === 'user' ? messages[i - 1].content : undefined
+          consultasParaExportar.push({
+            pregunta: userMsg,
+            respuesta: messages[i].content,
+            timestamp: messages[i].timestamp.toLocaleTimeString(),
+          })
+        }
+      }
+
+      if (consultasParaExportar.length === 0 && messages.length > 0) {
+        consultasParaExportar.push({
+          respuesta: messages[messages.length - 1].content,
+        })
+      }
+    }
+
+    if (consultasParaExportar.length === 0) return
+
+    const activeConv = conversaciones.find((c) => c.id === activeSessionId)
+
+    generarPdfInformeIa({
+      titulo: activeConv?.titulo || 'Informe Clínico Asistido por IA',
+      profesional: user?.alias ? `Psic. ${user.alias}` : 'Psicólogo de Turno',
+      fecha: new Date().toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' }),
+      consultas: consultasParaExportar,
+    })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, scrollToBottom])
+
+  const loadConversaciones = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/notificaciones?limit=20')
+      const res = await fetch('/api/admin/chatbot/conversaciones')
       if (res.ok) {
         const data = await res.json()
-        setNotificaciones(data.notificaciones || [])
+        setConversaciones(data.conversaciones || [])
       }
     } catch (error) {
-      console.error('Error loading notificaciones:', error)
+      console.error('Error loading conversaciones:', error)
     }
   }, [])
 
   useEffect(() => {
-    loadNotificaciones()
-  }, [loadNotificaciones])
+    loadConversaciones()
+  }, [loadConversaciones])
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  const handleSend = async () => {
-    if (!input.trim() || loading) return
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input.trim(),
-      timestamp: new Date()
+  const handleCrearNuevaConversacion = async () => {
+    try {
+      const res = await fetch('/api/admin/chatbot/conversaciones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ titulo: 'Nueva consulta clínica' }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        const newId = data.conversacion.id
+        setActiveSessionId(newId)
+        activeSessionRef.current = newId
+        setMessages([
+          {
+            id: 'init-new',
+            role: 'assistant',
+            content:
+              'Nueva consulta iniciada. Puedes preguntarme sobre métricas epidemiológicas, protocolos o consultar el estado de un paciente específico indicando su nombre o expediente.',
+            timestamp: new Date(),
+          },
+        ])
+        loadConversaciones()
+      }
+    } catch (error) {
+      console.error('Error al crear conversación:', error)
     }
+  }
 
-    setMessages(prev => [...prev, userMessage])
-    setInput('')
+  const handleSeleccionarConversacion = async (sesionId: number) => {
+    if (activeSessionId === sesionId) return
+
+    setActiveSessionId(sesionId)
+    activeSessionRef.current = sesionId
     setLoading(true)
+    setMessages([]) // Limpiar mensajes previos para evitar mezclas
 
     try {
-      const contextPayload = selectedNotif ? {
-        notificacion: {
-          tipoRiesgo: selectedNotif.tipoRiesgo,
-          titulo: selectedNotif.titulo,
-          descripcion: selectedNotif.descripcion,
-          accionRequerida: selectedNotif.accionRequerida,
-          paciente: {
-            nombre: selectedNotif.encuesta.nombre,
-            apellido: selectedNotif.encuesta.apellido,
-            edad: selectedNotif.encuesta.edad,
-            sexo: selectedNotif.encuesta.sexo
-          }
-        }
-      } : {}
+      const res = await fetch(`/api/admin/chatbot/conversaciones/${sesionId}`)
+      if (res.ok) {
+        const data = await res.json()
 
+        // Descartar si el usuario cambió rápidamente a otra conversación
+        if (activeSessionRef.current !== sesionId) return
+
+        if (data.mensajes && data.mensajes.length > 0) {
+          setMessages(
+            data.mensajes.map((m: { id: number; rol: 'user' | 'assistant'; contenido: string; fechaMensaje: string; contextoDatos?: { tools?: string[] } }) => ({
+              id: m.id.toString(),
+              role: m.rol,
+              content: m.contenido,
+              timestamp: new Date(m.fechaMensaje),
+              toolsUsed: m.contextoDatos?.tools,
+            }))
+          )
+        } else {
+          setMessages([
+            {
+              id: 'empty',
+              role: 'assistant',
+              content: 'Conversación sin mensajes previos. ¿En qué puedo asistirte hoy?',
+              timestamp: new Date(),
+            },
+          ])
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar mensajes:', error)
+    } finally {
+      if (activeSessionRef.current === sesionId) {
+        setLoading(false)
+      }
+    }
+  }
+
+  const handleEliminarConversacion = async (sesionId: number, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!confirm('¿Deseas eliminar esta consulta del historial?')) return
+
+    try {
+      const res = await fetch(`/api/admin/chatbot/conversaciones/${sesionId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        if (activeSessionId === sesionId) {
+          setActiveSessionId(null)
+          activeSessionRef.current = null
+          setMessages([
+            {
+              id: 'deleted',
+              role: 'assistant',
+              content: 'Consulta eliminada. Selecciona otra del historial o inicia una nueva.',
+              timestamp: new Date(),
+            },
+          ])
+        }
+        loadConversaciones()
+      }
+    } catch (error) {
+      console.error('Error al eliminar conversación:', error)
+    }
+  }
+
+  const handleSend = async (customPrompt?: string) => {
+    const textToSend = (customPrompt || input).trim()
+    if (!textToSend || loading) return
+
+    const userMessage: Message = {
+      id: `u-${Date.now()}`,
+      role: 'user',
+      content: textToSend,
+      timestamp: new Date(),
+    }
+
+    setMessages((prev) => [...prev, userMessage])
+    if (!customPrompt) setInput('')
+    setLoading(true)
+
+    const sessionTarget = activeSessionId
+
+    try {
       const res = await fetch('/api/admin/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: input.trim(),
-          context: contextPayload
-        })
+          message: textToSend,
+          sessionId: sessionTarget,
+        }),
       })
 
       if (res.ok) {
         const data = await res.json()
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: data.response,
-          timestamp: new Date()
+
+        // Si se creó una nueva sesión automáticamente
+        if (data.sessionId && activeSessionId !== data.sessionId) {
+          setActiveSessionId(data.sessionId)
+          activeSessionRef.current = data.sessionId
+          loadConversaciones()
         }
-        setMessages(prev => [...prev, assistantMessage])
+
+        // Si el usuario no cambió de conversación mientras la IA generaba respuesta
+        if (activeSessionRef.current === sessionTarget || (!sessionTarget && data.sessionId)) {
+          const assistantMessage: Message = {
+            id: (data.messageId || Date.now() + 1).toString(),
+            role: 'assistant',
+            content: data.response,
+            timestamp: new Date(),
+            toolsUsed: data.toolsUsed,
+          }
+          setMessages((prev) => [...prev, assistantMessage])
+        }
+      } else {
+        const errData = await res.json().catch(() => ({}))
+        const errorMessage: Message = {
+          id: `err-${Date.now()}`,
+          role: 'assistant',
+          content:
+            errData.error ||
+            'Ocurrió un error al procesar tu solicitud con el servicio de IA.',
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, errorMessage])
       }
     } catch (error) {
-      console.error('Error:', error)
+      console.error('Error in handleSend:', error)
       const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `err-${Date.now()}`,
         role: 'assistant',
-        content: 'Lo siento, hubo un error al procesar tu solicitud. Por favor, intenta de nuevo.',
-        timestamp: new Date()
+        content: 'Error de conexión con el motor de Inteligencia Artificial.',
+        timestamp: new Date(),
       }
-      setMessages(prev => [...prev, errorMessage])
+      setMessages((prev) => [...prev, errorMessage])
     } finally {
       setLoading(false)
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
     }
   }
 
-  const getRiesgoColor = (riesgo: string) => {
-    switch (riesgo) {
-      case 'muy_alto': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-      case 'alto': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
-      case 'moderado': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
-      default: return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-    }
-  }
-
   return (
-    <div className="h-[calc(100vh-200px)] flex gap-4">
-      {/* Sidebar: Notificaciones */}
-      <div className="w-80 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
-        <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-          <h2 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <Bell className="w-5 h-5 text-purple-600" />
-            Notificaciones Activas
-          </h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Selecciona para contexto</p>
+    <div className="h-[calc(100vh-9.5rem)] min-h-[580px] flex flex-col lg:flex-row gap-4 overflow-hidden">
+      {/* Sidebar: Historial de Consultas Limpio */}
+      <div className="w-full lg:w-76 bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden shrink-0">
+        <div className="p-3.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              Historial ({conversaciones.length})
+            </h3>
+          </div>
+
+          <button
+            onClick={handleCrearNuevaConversacion}
+            className="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs"
+          >
+            <PlusCircle className="w-3.5 h-3.5" />
+            <span>Nueva</span>
+          </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-2 space-y-2">
-          {notificaciones.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No hay notificaciones pendientes</p>
+
+        {/* Lista de Conversaciones */}
+        <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
+          {conversaciones.length === 0 ? (
+            <div className="text-center py-10 px-4 text-slate-400 text-xs">
+              <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-40 text-indigo-400" />
+              No hay consultas previas archivadas. Escribe tu primera pregunta en el chat.
+            </div>
           ) : (
-            notificaciones.map((notif) => (
-              <button
-                key={notif.id}
-                onClick={() => setSelectedNotif(notif)}
-                className={`w-full text-left p-3 rounded-lg transition-colors ${
-                  selectedNotif?.id === notif.id
-                    ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700'
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-700 border border-transparent'
+            conversaciones.map((conv) => (
+              <div
+                key={conv.id}
+                onClick={() => handleSeleccionarConversacion(conv.id)}
+                className={`group relative w-full text-left p-2.5 rounded-xl text-xs transition-all cursor-pointer border ${
+                  activeSessionId === conv.id
+                    ? 'bg-indigo-50/80 dark:bg-indigo-950/40 border-indigo-300 dark:border-indigo-700 shadow-xs text-indigo-950 dark:text-indigo-200'
+                    : 'border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'
                 }`}
               >
-                <div className="flex items-start gap-2">
-                  {notif.tipoRiesgo === 'muy_alto' || notif.tipoRiesgo === 'alto' ? (
-                    <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-                  ) : (
-                    <Bell className="w-4 h-4 text-yellow-500 mt-0.5 shrink-0" />
-                  )}
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{notif.titulo}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {notif.encuesta.nombre || 'Anónimo'} · {notif.encuesta.edad} años
-                    </p>
-                    <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs ${getRiesgoColor(notif.tipoRiesgo)}`}>
-                      {notif.tipoRiesgo}
-                    </span>
-                  </div>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-semibold truncate flex-1">
+                    {conv.titulo || `Consulta #${conv.id}`}
+                  </p>
+                  <button
+                    onClick={(e) => handleEliminarConversacion(conv.id, e)}
+                    title="Eliminar consulta"
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 transition-opacity p-0.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-              </button>
+                <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-400">
+                  <span>{new Date(conv.fechaInicio).toLocaleDateString()}</span>
+                  <span>•</span>
+                  <span>{conv.totalMensajes || 0} mensajes</span>
+                </div>
+              </div>
             ))
           )}
         </div>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
+      {/* Main Chat Area */}
+      <div className="flex-1 bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-          <h2 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <Bot className="w-5 h-5 text-purple-600" />
-            Asistente IA para Psicólogos
-          </h2>
-          {selectedNotif && (
-            <div className="mt-2 p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-sm">
-              <p className="font-medium text-purple-800 dark:text-purple-300">Contexto: {selectedNotif.titulo}</p>
-              <p className="text-purple-600 text-xs mt-1">{selectedNotif.descripcion}</p>
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-900">
+              <Bot className="w-5 h-5" />
             </div>
-          )}
+            <div>
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+                Copiloto Clínico de Inteligencia Artificial
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Triage psicométrico, cruce de factores y soporte prescriptivo
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleDescargarPdf()}
+              title="Descargar informe de esta consulta en PDF"
+              className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs"
+            >
+              <FileDown className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span className="hidden sm:inline">Exportar Consulta PDF</span>
+            </button>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Sistema de Triage Activo
+            </span>
+          </div>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Messages Feed */}
+        <div
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0"
+        >
           {messages.map((msg) => (
             <div
               key={msg.id}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`flex items-start gap-2 max-w-[80%] ${
-                msg.role === 'user' ? 'flex-row-reverse' : ''
-              }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                  msg.role === 'user' 
-                    ? 'bg-indigo-100 dark:bg-indigo-900/30' 
-                    : 'bg-purple-100 dark:bg-purple-900/30'
-                }`}>
-                  {msg.role === 'user' ? (
-                    <User className="w-4 h-4 text-indigo-600" />
-                  ) : (
-                    <Bot className="w-4 h-4 text-purple-600" />
-                  )}
+              <div
+                className={`flex items-start gap-3 max-w-[85%] ${
+                  msg.role === 'user' ? 'flex-row-reverse' : ''
+                }`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-semibold ${
+                    msg.role === 'user'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
+                  }`}
+                >
+                  {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                 </div>
-                <div className={`px-4 py-3 rounded-2xl ${
-                  msg.role === 'user'
-                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-tl-none'
-                }`}>
-                  <p className="whitespace-pre-wrap text-sm">{msg.content}</p>
+                <div
+                  className={`px-4 py-3 rounded-2xl text-xs sm:text-sm leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'bg-indigo-600 text-white rounded-tr-none shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-none border border-slate-200/70 dark:border-slate-700/70'
+                  }`}
+                >
+                  {msg.role === 'user' ? (
+                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                  ) : (
+                    <>
+                      <ClinicalMarkdown content={msg.content} />
+                      <div className="flex justify-end mt-2 pt-1 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <button
+                          onClick={() => handleDescargarPdf(msg)}
+                          title="Descargar esta respuesta como informe médico PDF"
+                          className="text-[11px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors"
+                        >
+                          <FileDown className="w-3 h-3" />
+                          <span>Descargar PDF</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           ))}
+
           {loading && (
             <div className="flex justify-start">
-              <div className="flex items-start gap-2">
-                <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-purple-600" />
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center text-indigo-600">
+                  <Bot className="w-4 h-4 animate-spin" />
                 </div>
-                <div className="px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-2xl rounded-tl-none">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                  </div>
+                <div className="px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-2xl rounded-tl-none flex items-center gap-2 border border-slate-200/70 dark:border-slate-700/70">
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                    Evaluando expedientes y protocolos clínicos...
+                  </span>
                 </div>
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <div className="p-4 border-t border-gray-100 dark:border-gray-700">
-          <div className="flex items-end gap-2">
+        {/* Quick Action Chips */}
+        <div className="px-4 py-2 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto shrink-0 no-scrollbar">
+          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-indigo-500" />
+            Consultas rápidas:
+          </span>
+          <button
+            onClick={() => handleSend('¿Cuáles son las métricas generales de salud mental y distribución de gravedad actual en la población?')}
+            disabled={loading}
+            className="px-2.5 py-1 rounded-full text-xs bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 shrink-0 transition-colors flex items-center gap-1"
+          >
+            <BarChart3 className="w-3 h-3 text-indigo-500" />
+            Métricas Poblacionales
+          </button>
+          <button
+            onClick={() => handleSend('¿Cuáles son los casos de riesgo crítico que requieren atención inmediata y qué acciones se sugieren?')}
+            disabled={loading}
+            className="px-2.5 py-1 rounded-full text-xs bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 shrink-0 transition-colors flex items-center gap-1"
+          >
+            <ShieldAlert className="w-3 h-3 text-rose-500" />
+            Casos de Riesgo Crítico
+          </button>
+          <button
+            onClick={() => handleSend('¿Cuál es el protocolo de contención y seguridad para un paciente en riesgo muy alto según las guías clínicas?')}
+            disabled={loading}
+            className="px-2.5 py-1 rounded-full text-xs bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 shrink-0 transition-colors flex items-center gap-1"
+          >
+            <FileCheck2 className="w-3 h-3 text-emerald-500" />
+            Protocolo de Crisis Oficial
+          </button>
+        </div>
+
+        {/* Input Bar */}
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
+          <div className="flex gap-2">
             <textarea
+              rows={1}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={selectedNotif ? "Pregunta sobre esta notificación..." : "Escribe tu pregunta..."}
-              className="flex-1 resize-none px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100 dark:placeholder:text-gray-400"
-              rows={2}
+              onKeyDown={handleKeyDown}
+              placeholder='Escribe tu consulta clínica (ej. "Evaluar caso de Juan Pérez", "¿Qué factores aumentan el riesgo en zona rural?")...'
+              className="flex-1 p-3 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-slate-100 dark:placeholder:text-slate-400 resize-none transition-all"
             />
             <button
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={!input.trim() || loading}
-              className="px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl font-semibold flex items-center justify-center transition-colors shadow-xs"
             >
-              <Send className="w-5 h-5" />
-            </button>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <button
-              onClick={() => setInput("¿Cuál es el protocolo de intervención para este nivel de riesgo?")}
-              className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-            >
-              Protocolo de intervención
-            </button>
-            <button
-              onClick={() => setInput("¿Qué preguntas de seguimiento debería hacer?")}
-              className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-            >
-              Preguntas de seguimiento
-            </button>
-            <button
-              onClick={() => setInput("Genera un plan de tratamiento sugerido")}
-              className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-            >
-              Plan de tratamiento
+              <Send className="w-4 h-4" />
             </button>
           </div>
         </div>
