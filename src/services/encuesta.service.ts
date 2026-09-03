@@ -103,10 +103,24 @@ export class EncuestaService {
     const edad = Number(rawBody.edad) || 25
     const sexo = String(rawBody.sexo || 'otro')
 
+    // Validar si el usuarioId realmente existe en la base de datos para evitar errores de Foreign Key
+    let validUsuarioId: number | null = null
+    if (usuarioId) {
+      try {
+        const userExists = await prisma.usuario.findUnique({
+          where: { id: usuarioId },
+          select: { id: true }
+        })
+        if (userExists) validUsuarioId = userExists.id
+      } catch {
+        validUsuarioId = null
+      }
+    }
+
     // 7. Inserción atómica en base de datos
     const encuestaCreada = await prisma.encuesta.create({
       data: {
-        usuarioId: usuarioId || null,
+        usuarioId: validUsuarioId,
         nombre: rawBody.nombre ? String(rawBody.nombre).trim() : null,
         apellido: rawBody.apellido ? String(rawBody.apellido).trim() : null,
         edad,
@@ -209,17 +223,17 @@ export class EncuestaService {
           socioeconomicos: {
             create: {
               estadoLaboral: socio.estadoLaboral || null,
-              satisfaccionLaboral: socio.satisfaccionLaboral ? Number(socio.satisfaccionLaboral) : null,
-              estresLaboral: socio.estresLaboral ? Number(socio.estresLaboral) : null,
+              satisfaccionLaboral: Number.isFinite(Number(socio.satisfaccionLaboral)) ? Number(socio.satisfaccionLaboral) : null,
+              estresLaboral: Number.isFinite(Number(socio.estresLaboral)) ? Number(socio.estresLaboral) : null,
               nivelDeudas: socio.nivelDeudas || null,
               dificultadEconomica: socio.dificultadEconomica !== undefined ? Boolean(socio.dificultadEconomica) : null,
-              calidadRelacionesFamiliares: rel.calidadRelacionesFamiliares ? Number(rel.calidadRelacionesFamiliares) : null,
-              calidadRelacionesPareja: rel.calidadRelacionesPareja ? Number(rel.calidadRelacionesPareja) : null,
-              apoyoSocialPercibido: rel.apoyoSocialPercibido ? Number(rel.apoyoSocialPercibido) : null,
-              numPersonasConfianza: rel.numPersonasConfianza !== undefined ? Number(rel.numPersonasConfianza) : null,
+              calidadRelacionesFamiliares: Number.isFinite(Number(rel.calidadRelacionesFamiliares)) ? Number(rel.calidadRelacionesFamiliares) : null,
+              calidadRelacionesPareja: Number.isFinite(Number(rel.calidadRelacionesPareja)) ? Number(rel.calidadRelacionesPareja) : null,
+              apoyoSocialPercibido: Number.isFinite(Number(rel.apoyoSocialPercibido)) ? Number(rel.apoyoSocialPercibido) : null,
+              numPersonasConfianza: Number.isFinite(Number(rel.numPersonasConfianza)) ? Number(rel.numPersonasConfianza) : null,
               viveSolo: rel.viveSolo !== undefined ? Boolean(rel.viveSolo) : null,
               tipoVivienda: socio.tipoVivienda || null,
-              calidadVivienda: socio.calidadVivienda ? Number(socio.calidadVivienda) : null,
+              calidadVivienda: Number.isFinite(Number(socio.calidadVivienda)) ? Number(socio.calidadVivienda) : null,
             },
           },
         }),
@@ -230,8 +244,8 @@ export class EncuestaService {
             create: {
               enfermedadCronica: Boolean(salud.enfermedadCronica),
               dolorCronico: Boolean(salud.dolorCronico),
-              calidadSueno: Number(salud.calidadSueno) || 3,
-              horasSuenoPromedio: salud.horasSuenoPromedio !== undefined ? Number(salud.horasSuenoPromedio) : null,
+              calidadSueno: Number.isFinite(Number(salud.calidadSueno)) ? Number(salud.calidadSueno) : 3,
+              horasSuenoPromedio: Number.isFinite(Number(salud.horasSuenoPromedio)) ? Number(salud.horasSuenoPromedio) : null,
               insomnio: Boolean(salud.insomnio),
               consumeAlcohol: Boolean(salud.consumeAlcohol),
               frecuenciaAlcohol: salud.frecuenciaAlcohol || 'nunca',

@@ -186,7 +186,11 @@ export default function EncuestaPage() {
   // Create session on mount
   useEffect(() => {
     inicioRef.current = new Date()
-    fetch("/api/metricas/sesion", { method: "POST" })
+    fetch("/api/metricas/sesion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ inicio: new Date().toISOString() }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.sesionId) sesionIdRef.current = data.sesionId
@@ -290,6 +294,10 @@ export default function EncuestaPage() {
         }
 
         router.push(`/encuesta/${result.id}`)
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        console.error("Error devuelto por el servidor al crear encuesta:", errorData)
+        alert(`No se pudo enviar la encuesta: ${errorData.details || errorData.error || 'Error interno del servidor'}. Por favor, inténtalo nuevamente.`)
       }
     } catch (error) {
       console.error("Error al enviar encuesta:", error)

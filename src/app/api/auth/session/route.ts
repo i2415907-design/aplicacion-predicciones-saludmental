@@ -4,7 +4,7 @@ export async function GET(request: NextRequest) {
   const sessionCookie = request.cookies.get('session')
 
   if (!sessionCookie) {
-    return NextResponse.json({ authenticated: false }, { status: 401 })
+    return NextResponse.json({ authenticated: false }, { status: 200 })
   }
 
   try {
@@ -14,6 +14,6 @@ export async function GET(request: NextRequest) {
       usuario: session
     })
   } catch {
-    return NextResponse.json({ authenticated: false }, { status: 401 })
+    return NextResponse.json({ authenticated: false }, { status: 200 })
   }
 }

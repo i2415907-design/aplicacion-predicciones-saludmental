@@ -4,7 +4,15 @@ import { prisma } from '@/lib/prisma'
 // POST /api/metricas/sesion - Registrar inicio de una encuesta
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    // Lectura segura del body en caso de que venga vacío
+    try {
+      const text = await request.text()
+      if (text && text.trim()) {
+        JSON.parse(text)
+      }
+    } catch {
+      // Body es opcional, continuar normalmente
+    }
 
     const sesion = await prisma.sesionEncuesta.create({
       data: {
