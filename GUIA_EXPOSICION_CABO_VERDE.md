@@ -1,259 +1,224 @@
 # 🎓 GUÍA MAESTRA DE EXPOSICIÓN ACADÉMICA — EQUIPO "CABO VERDE"
-## Sustentación Oficial del Sistema MVP de BI e Inteligencia Artificial para Prevención de Depresión y Suicidio
+## Alineada 100% con la Rúbrica Oficial de Sustentación de Inteligencia Artificial
+### Proyecto: Sistema de Asistencia Clínica y Triage Preventivo en Salud Mental mediante Inteligencia Artificial
 
 ---
 
-### 📌 FICHA TÉCNICA DEL PROYECTO Y EQUIPO
-- **Asignatura:** Inteligencia Artificial (6to Ciclo - Semestre 2026)
-- **Docente Titular:** Mg. Karem Mercedes Maldonado Cordova
+### 📌 FICHA TÉCNICA INSTITUCIONAL
+- **Asignatura:** Inteligencia Artificial (Semestre VI - 2026)
+- **Docente:** Mg. Karem Mercedes Maldonado Cordova
 - **Equipo de Trabajo:** *“Cabo Verde”*
 - **Integrantes:**
   1. **Arones Romani, Henry**
   2. **Inga Quispe, Diego Anthony**
   3. **Paucar Torres, Gabriel Emerando**
   4. **Ponce Otarola, Jarem Antonio**
-- **Cuerpo Documental del Proyecto:** Basado en la especificación técnica de `documentacion/` (`00_PMV_Sistema_BI_IA.md`, `01_documento_tecnico.md`, `analisis_variables_predictoras.md`, `analisis_datos_proyecto.md`).
-- **Stack en Producción:** Next.js 16 (Turbopack) · TypeScript · PostgreSQL 17 (17 tablas, 239 columnas) · Google Cloud Vertex AI (Gemini 2.5 Flash optimizado a 1.3s con `thinkingBudget: 0`) · Prisma ORM · jsPDF.
+- **Criterio Central de la Sustentación:**  
+  $$\text{PROBLEMA CORRECTAMENTE FORMULADO} + \text{PMV FUNCIONAL} + \text{IA TÉCNICAMENTE JUSTIFICADA}$$
+- **Secuencia Lógica Obligatoria:**  
+  $$\mathbf{PROBLEMA} \longrightarrow \mathbf{PROPUESTA} \longrightarrow \mathbf{PMV} \longrightarrow \mathbf{DATOS} \longrightarrow \mathbf{IA} \longrightarrow \mathbf{RESULTADOS} \longrightarrow \mathbf{CONCLUSI\acute{O}N}$$
 
 ---
 
-## 🎯 GUION DIAPOSITIVA POR DIAPOSITIVA: SUSTENTACIÓN DEL MVP
+## 🧭 LAS 4 PREGUNTAS FUNDAMENTALES DE LA RÚBRICA
+
+Antes de ver diapositiva por diapositiva, todo el equipo debe memorizar las respuestas a estas 4 preguntas clave que evaluará la docente:
+
+1. **¿Qué problema real se está resolviendo?**  
+   *La detección tardía y el triage reactivo de la depresión severa y el riesgo suicida en consultas médicas sobrecargadas (10 a 15 minutos), donde no da tiempo de aplicar tamizajes exhaustivos manuales.*
+2. **¿Qué parte del problema resuelve el PMV desarrollado?**  
+   *La fase de tamizaje inicial y priorización: digitaliza 5 escalas clínicas (84 ítems), calcula el riesgo en menos de 2 segundos, enciende alertas inmediatas (Código Rojo) y entrega al psicólogo un informe prescriptivo asistido por IA.*
+3. **¿Cómo interviene la Inteligencia Artificial dentro de la solución?**  
+   *Mediante una arquitectura híbrida: una capa de IA Simbólica determinista en código que calcula matemáticamente el score de riesgo (0-23 pts) sin margen de error, y un Copiloto Generativo en Google Vertex AI (Gemini 2.5 Flash) que analiza el expediente holístico, ejecuta herramientas mediante Function Calling y formula el plan de seguridad en 1.3s.*
+4. **¿Qué evidencias demuestran que el PMV funciona y aporta valor?**  
+   *Reducción del tiempo de triage de 20 minutos a menos de 2 segundos; 0% de falsos negativos en ideación activa (ítem 9 de PHQ-9 ≥ 2); latencia optimizada de 1.3s con `thinkingBudget: 0`; 3,465 encuestas y 2,000+ notificaciones procesadas; y una Tasa de Adopción de Protocolo proyectada $\ge 70\%$.*
 
 ---
 
-### DIAPOSITIVA 1: Cita de Impacto y Realidad Epidemiológica
-- **Texto en Diapositiva:** *“Cada 40 segundos, una persona en el mundo se quita la vida; más de 700,000 al año. La depresión no es tristeza pasajera ni debilidad: es un dolor invisible que destruye en silencio cuando nadie detecta las señales a tiempo.”*
-- **Qué sustentar ante la docente:**
-  > *"Profesora, el origen de nuestro MVP responde a una problemática de salud pública crítica: según la OMS, el suicidio es la 4ta causa de muerte en jóvenes de 15 a 29 años, con un incremento del 17% en América Latina. La brecha no está en la falta de tratamientos, sino en que las consultas médicas convencionales duran entre 10 y 15 minutos, tiempo insuficiente para aplicar tamizajes clínicos manuales exhaustivos. La detección actual es reactiva (cuando ya ocurrió la crisis). Nuestro MVP convierte esa detección en un proceso proactivo, digital y preventivo."*
-- **Metáfora explicativa:**
-  *“Imaginen un radar meteorológico de un aeropuerto. Si el radar solo avisa del huracán cuando ya está arrancando el techo del avión, es inútil. Nuestro sistema es el radar meteorológico que detecta la variación de presión barométrica (la ideación pasiva y la desesperanza) horas antes de la tormenta, permitiendo cambiar el rumbo.”*
+## 📖 GUION DE EXPOSICIÓN DIAPOSITIVA POR DIAPOSITIVA (RÚBRICA OFICIAL)
 
 ---
 
-### DIAPOSITIVA 2: Portada Oficial del MVP y Equipo Cabo Verde
-- **Elementos:** Título del Proyecto, Asignatura (Inteligencia Artificial), Docente (Mg. Karem Mercedes Maldonado Cordova), Equipo ("Cabo Verde") y los 4 integrantes.
-- **Qué sustentar ante la docente:**
-  > *"Presentamos formalmente la defensa de nuestro MVP desarrollado por el equipo Cabo Verde para la asignatura de Inteligencia Artificial."*
+### DIAPOSITIVA 0: Cita de Impacto y Realidad Epidemiológica
+- **Texto:** *“Cada 40 segundos, una persona en el mundo se quita la vida; más de 700,000 al año. La depresión no es tristeza pasajera ni debilidad: es un dolor invisible que destruye en silencio cuando nadie detecta las señales a tiempo.”*
+- **Qué decir al jurado:**
+  > *"Iniciamos nuestra sustentación con una realidad crítica: según la OMS, el suicidio es la 4ta causa de muerte en jóvenes de 15 a 29 años. Más del 70% de las personas en riesgo emiten señales previas de ideación pasiva y desesperanza, pero la sobrecarga del sistema de salud y la falta de un triage preventivo impiden actuar a tiempo. Nuestro proyecto nace para transformar esa brecha."*
 
 ---
 
-### DIAPOSITIVA 3: Hipótesis, Experimento, Métrica Core y Criterio de Éxito
-- **La Hipótesis (del documento `00_PMV_Sistema_BI_IA.md`):**
-  - **Hipótesis de Valor:** Si ofrecemos a una población objetivo una autoevaluación digital periódica con instrumentos validados y un módulo de IA que clasifique el riesgo, conectaremos oportunamente a personas vulnerables con ayuda profesional antes de un intento autolítico.
-  - **Hipótesis Técnica:** La captura de 5 escalas estandarizadas (84 ítems) más 7 factores de riesgo ponderados permite clasificar con certeza el riesgo suicida en menos de 2 segundos.
-- **El Experimento (Nuestro MVP):**
-  - Formulario wizard de 10 pasos que recopila 84 ítems psicométricos.
-  - 3,465 encuestas procesadas en el dataset y más de 2,000 notificaciones clínicas automáticas.
-  - Panel administrativo con semáforo y Copiloto de IA en tiempo real.
-- **La Métrica Core (Tasa de Adopción de Protocolo - TAP):**
-  $$\text{TAP} = \left( \frac{\text{Protocolos Clínicos Activados por el Psicólogo}}{\text{Total de Alertas de Riesgo Emitidas}} \right) \times 100$$
-  - Mide la **utilidad real** y la confianza del profesional en la sugerencia del sistema, no solo la exactitud matemática.
-- **Criterio de Éxito:**
-  - **TAP $\ge 70\%$:** Éxito y validación positiva del MVP para pasar a fase de integración hospitalaria.
-  - **50% - 69%:** Zona de ajuste de usabilidad y calibración de los protocolos.
-  - **$< 50\%$:** Pivotar la solución.
-- **Metáfora explicativa:**
-  *“La Métrica Core no es cuántas alertas pita el sistema, sino cuántas veces el bombero decide salir a apagar el fuego porque confía en la alarma. Si el sistema emite 100 alertas rojas y el psicólogo activa el protocolo en 70 o más, el experimento es un éxito rotundo.”*
+### DIAPOSITIVA 1: PARTE 1 — Presentación del Proyecto y Portada del PMV
+- **Objetivo de la rúbrica:** Presentar nombre, integrantes, contexto y frase breve en una sola idea central.
+- **Qué decir al jurado:**
+  > *"Somos el equipo **Cabo Verde**, conformado por Henry Arones Romani, Diego Inga Quispe, Gabriel Paucar Torres y Jarem Ponce Otarola. Para la asignatura de **Inteligencia Artificial**, a cargo de nuestra docente Mg. Karem Mercedes Maldonado Cordova, presentamos el **Sistema de Asistencia Clínica y Triage Preventivo en Salud Mental**.*
+  >
+  > *Nuestra idea central es:* **Identificación temprana y priorización automatizada del riesgo de depresión y conducta suicida mediante triage inteligente para psicólogos y profesionales de salud.**"
 
 ---
 
-### DIAPOSITIVA 4: Interfaz Integrada y Dualidad de Inteligencia Artificial
-- **Interfaz Integrada:**
-  - Una única aplicación web en Next.js que desacopla la vista del paciente (formulario accesible, anónimo o con sesión) de la vista del psicólogo (panel de control, detalle del caso, historial y recomendaciones de IA).
-- **Dualidad de IA en Nuestro Proyecto:**
-  1. **IA Tradicional / Simbólica (Determinista):**
-     - Ubicación: `src/lib/calculos.ts` en la función `calcularRiesgoGlobal()`.
-     - Motor matemático que suma los 7 factores psicométricos de 0 a 23 puntos.
-     - **Cero alucinación:** Si el ítem 9 de PHQ-9 es $\ge 2$, incondicionalmente suma 3 puntos de riesgo y fuerza alerta. Se ejecuta en menos de 5 milisegundos en el servidor.
-  2. **IA Generativa (Google Cloud Vertex AI - Gemini 2.5 Flash):**
-     - Ubicación: `src/lib/ai/vertex-provider.ts` y `src/lib/ai/orchestrator.ts`.
-     - Copiloto clínico conversacional que analiza el expediente holístico, ejecuta tools vía Function Calling y formula el plan de seguridad en lenguaje natural.
-     - **Optimización lograda:** Inicialmente tardaba 6 segundos por calcular *thinking tokens*; al configurar `thinkingBudget: 0`, responde en **1.3 segundos**.
-- **Metáfora explicativa:**
-  *“Es como un copiloto de avión moderno: la IA Tradicional es el piloto automático que mide con sensores rígidos la altitud y la velocidad del viento (datos exactos sin fallas). La IA Generativa es el copiloto humano experto que asiste al capitán interpretando el mapa y sugiriendo la mejor ruta para aterrizar de emergencia.”*
+### DIAPOSITIVA 2: PARTE 2 — Problema Identificado
+- **Objetivo de la rúbrica:** Situación actual, quién se ve afectado, qué dificultad existe y qué consecuencias produce.
+- **Qué decir al jurado:**
+  > *"**1. Situación Actual y Consecuencias:** Más de 720,000 muertes al año y un incremento del 17% en América Latina. Afecta directamente a jóvenes, estudiantes y familias, produciendo pérdidas de vidas humanas evitables.*
+  >
+  > *2. **Dificultad Concreta:** Las consultas clínicas duran entre 10 y 15 minutos, lo que hace inviable aplicar manualmente cuestionarios extensos de 84 preguntas. La detección actual es **reactiva**: el sistema de salud solo se entera cuando el paciente ya está en la sala de emergencias con una autolesión. Existe una desconexión total entre las primeras señales del paciente y la atención oportuna del psicólogo."*
 
 ---
 
-### DIAPOSITIVA 5: Ecosistema de Nodos, Workflow y Arquitectura ETL vs ELT
-- **Workflow Clínico de 4 Nodos:**
-  1. **Disparador (Trigger):** Petición POST a `/api/encuesta` al enviar los 10 pasos del wizard.
-  2. **Transformación (ETL):** Validación de rangos (0-3), cálculo de puntajes por escala y ponderación de riesgo (0-23 pts).
-  3. **Lógica de Negocio y Persistencia:** Prisma ORM guarda en PostgreSQL (en las 17 tablas relacionales) y crea la alerta en la tabla `notificaciones`.
-  4. **Intervención AI:** Orquestador de Vertex AI consulta el expediente y emite la recomendación clínica estructurada.
-- **Diferenciación Técnica ETL vs ELT:**
-  - **ETL (Extract - Transform - Load):** Lo usamos en la captura de encuestas. Se extraen los datos crudos del formulario, se transforman (limpieza, baremación psicométrica y scoring de severidad) y recién se cargan en la base de datos de encuestas limpias.
-  - **ELT (Extract - Load - Transform):** Lo usamos en el Dashboard de Business Intelligence. Se cargan masivamente 3,465 registros en PostgreSQL y el motor relacional realiza la transformación analítica al vuelo mediante vistas SQL, promedios y agrupaciones en tiempo real.
+### DIAPOSITIVA 3: PARTE 3 — Objetivo del PMV
+- **Objetivo de la rúbrica:** Indicar qué se busca mejorar, automatizar, clasificar, apoyar o recomendar.
+- **Qué decir al jurado:**
+  > *"El objetivo concreto de nuestro PMV es:*
+  > 1. **Automatizar** la captura y cálculo psicométrico de 5 escalas internacionales (PHQ-9, C-SSRS, BHS, DASS-21, Rosenberg).
+  > 2. **Clasificar** en menos de 2 segundos el nivel de severidad en una escala ordinal de 4 niveles: Bajo, Moderado, Alto y Muy Alto.
+  > 3. **Apoyar y Recomendar** al profesional de turno mediante un Copiloto Clínico de IA que genera en tiempo real el plan de contingencia basado en evidencia (Plan de Seguridad Stanley & Brown y derivación a la Línea de Crisis 113)."*
 
 ---
 
-### DIAPOSITIVA 6: Estándares ISO 14971, Ética y Auditoría de Tools
-- **Norma Médica ISO 14971 (Gestión de Riesgos en Software de Salud):**
-  - **Supervisión Humana (*Human-in-the-Loop*):** El sistema asiste al profesional con una recomendación diagnóstica, pero la decisión de internamiento o prescripción farmacológica recae única y legalmente en el psicólogo colegiado.
-  - **Fiabilidad y Tolerancia a Fallos:** Si la API externa de IA en la nube pierde conexión, el sistema local sigue funcionando y clasificando el riesgo mediante el motor simbólico de reglas.
-- **Caso Real de Auditoría de Tools (Seguridad y Transparencia):**
-  - **Vulnerabilidad detectada en pruebas:** El modelo generativo respondió a un usuario: *“Puedo consultar la herramienta obtenerProtocoloClinico en la base de datos sistema_ia_depresion”*, filtrando nombres técnicos de funciones y tablas de la infraestructura.
-  - **Solución implementada:**
-    1. *Regla estricta en el System Prompt (`orchestrator.ts`):* Prohibición de decir la palabra "tool" o el nombre en código, forzando el uso de alias institucionales (*"protocolo clínico de intervención"*).
-    2. *Sanitizador visual regex (`ClinicalMarkdown.tsx`):* Filtro que intercepta y reemplaza cualquier término de base de datos antes de pintar en pantalla.
+### DIAPOSITIVA 4: PARTE 4 — Usuario y Necesidad
+- **Objetivo de la rúbrica:** Identificar quién utilizará la solución y qué tarea o decisión se busca mejorar.
+- **Qué decir al jurado:**
+  > *"Nuestro PMV atiende a dos actores claramente definidos:*
+  > - **Actor 1: El Paciente / Encuestado:** Una persona o estudiante vulnerable que necesita una autoevaluación anónima, confidencial, sin estigma social, que pueda responder en 5 minutos y que le brinde contacto inmediato con líneas de ayuda.
+  > - **Actor 2: El Psicólogo / Triajista de Turno:** El profesional que necesita priorizar casos críticos (Código Rojo) entre cientos de encuestas, visualizar el expediente resumido y contar con un asistente que le ahorre tiempo redactando informes clínicos."*
 
 ---
 
-### DIAPOSITIVA 7: Las 4 Dimensiones Analíticas en Nuestro MVP
-- **1. Descriptivo (¿Qué ocurrió?):**
-  - Vista en el Dashboard BI: 3,465 encuestas registradas, 279 fallecimientos históricos (277 por causas voluntarias), promedio poblacional de PHQ-9 de 8.4 puntos, distribución por género y rangos de edad.
-- **2. Diagnóstico (¿Por qué ocurrió?):**
-  - Análisis de causalidad: Cómo el desempleo, el insomnio crónico, la falta de personas de confianza y el consumo de alcohol o drogas correlacionan fuertemente con puntajes altos en la Escala de Desesperanza (BHS $\ge 15$).
-- **3. Predictivo (¿Qué podría ocurrir?):**
-  - Proyección de desenlaces: Identifica cuándo un paciente en depresión moderada tiene alta probabilidad de escalar a conducta autolesiva por presentar antecedentes de intento previo.
-- **4. Prescriptivo (¿Qué debemos hacer?):**
-  - El Copiloto Clínico IA genera el plan de acción: derivación a emergencias psiquiátricas, activación de la Línea 113 opción 5, elaboración del Plan de Seguridad de Stanley & Brown y retiro de medios letales en el hogar.
+### DIAPOSITIVA 5: PARTE 5 — Propuesta de Solución
+- **Objetivo de la rúbrica:** Explicar qué hace el PMV, cómo funciona y diferenciar la solución completa del PMV.
+- **Qué decir al jurado:**
+  > *"El PMV funciona mediante un flujo continuo: el paciente llena un formulario wizard digital; el backend calcula automáticamente los baremos y pondera el riesgo de 0 a 23 puntos; la base de datos genera una alerta roja si hay peligro; y el psicólogo recibe el apoyo de un Copiloto con IA.*
+  >
+  > *Diferenciamos con claridad la visión completa del PMV desarrollado:*
+  > - *La visión futura completa contempla seguimiento por meses, integración con relojes inteligentes (wearables) y predicción poblacional.*
+  > - *El **PMV real implementado** se concentra estrictamente en la propuesta de valor esencial: **Triage rápido + Alerta roja inmediata + Asistencia médica en la decisión**."*
 
 ---
 
-### DIAPOSITIVA 8: Cómo Aplicamos el Ciclo Lean Startup en Nuestro MVP
-- **Construir (Build):**
-  - Se implementaron estrictamente las 5 funcionalidades mínimas viables: Encuesta wizard, Alertas automáticas, Panel admin de expedientes, Chatbot IA contextual y Dashboard BI.
-  - Se excluyeron conscientemente características no prioritarias (apps nativas, WebSockets, pasarelas de pago) para no desperdiciar recursos antes de validar el valor.
-- **Medir (Measure):**
-  - Medición cuantitativa del tiempo de respuesta del chatbot (latencia de red) y retroalimentación de encuestados mediante el sistema de calificación de 1 a 5 estrellas.
-- **Aprender (Learn):**
-  - Se identificó la sobrecarga del *thinking budget* en Gemini 2.5 Flash y se optimizó de 6s a 1.3s.
-  - Se detectó que el admin podía calificar la encuesta ajena y se corrigió a modo solo lectura para garantizar la pureza de la métrica de satisfacción.
+### DIAPOSITIVA 6: PARTE 6 — Alcance del PMV (Incluye / No Incluye)
+- **Objetivo de la rúbrica:** Lista breve de qué se implementó y qué queda para versiones posteriores.
+- **Qué decir al jurado:**
+  > *"Para mantener un desarrollo ágil y verificable, definimos el alcance:*
+  > - **Incluye:** Wizard de 10 pasos (84 ítems), motor de scoring compuesto (0-23 pts), semáforo clínico, panel de administración con filtros de riesgo, Copiloto Clínico de IA (Vertex AI Gemini), exportador de informes en PDF médico y Dashboard de Business Intelligence.
+  > - **No incluye en esta fase:** App móvil nativa (se resolvió con web responsive en Next.js), notificaciones por SMS de pago, chat por WebSockets (el polling actual es suficiente) y analítica de series temporales largas."*
 
 ---
 
-### DIAPOSITIVA 9: Etapas de Desarrollo en Nuestro MVP
-- Muestra el recorrido completo del equipo a través del ciclo de vida del software:
-  1. *Comprender el problema:* Investigación de la brecha en el triage clínico de salud mental.
-  2. *Definir el objetivo:* Herramienta de tamizaje que emita alertas en menos de 2 segundos.
-  3. *Definir funcionalidad mínima:* 5 escalas clínicas validadas y panel médico con IA.
-  4. *Diseñar el MVP:* Modelo relacional de 17 tablas en PostgreSQL con API REST en Next.js.
-  5. *Construir:* 21 endpoints, 24 componentes y orquestador con Function Calling.
-  6. *Probar:* Ingesta de 3,465 registros con scripts de Faker y benchmarks de latencia en vivo.
-  7. *Aprender y mejorar:* Blindaje de seguridad en tools y exportación de informes en PDF.
-  8. *Sustentar:* Creación del presentador interactivo de diapositivas integrado en `/admin/diapositivas`.
+### DIAPOSITIVA 7: PARTE 7 — Arquitectura y Flujo del Sistema (¿Dónde está la IA?)
+- **Objetivo de la rúbrica:** Mostrar cómo circula la información y observar dónde se encuentra realmente la IA.
+- **Qué decir al jurado:**
+  > *"La información circula a través de 6 capas:*
+  > 1. *Usuario (Paciente en el navegador).*
+  > 2. *Entrada (Petición POST con 84 respuestas a `/api/encuesta`).*
+  > 3. *Backend (API Routes en Next.js 16 con validación de tipos).*
+  > 4. **Componente de IA (El Núcleo):** Se encuentra en dos ubicaciones exactas del código:
+  >    - En `src/lib/calculos.ts` (IA Simbólica determinista que procesa los 7 factores de riesgo en 2ms).
+  >    - En `src/lib/ai/orchestrator.ts` (Google Vertex AI con Gemini 2.5 Flash que ejecuta Function Calling en 1.3s).
+  > 5. *Resultado (Alerta en la tabla `notificaciones` con semáforo).*
+  > 6. *Acción Clínica (Psicólogo activa Plan de Seguridad y derivación).* "
 
 ---
 
-### DIAPOSITIVA 10: Preguntas Críticas de Validación de Valor
-- **1. ¿Resuelve directamente el problema?**
-  - **Sí:** En lugar de esperar semanas por un turno en un centro de salud, el usuario realiza el tamizaje en 5 minutos y el sistema notifica de inmediato al psicólogo de turno con el nivel de urgencia.
-- **2. ¿Es necesario para validar la hipótesis?**
-  - **Sí:** Sin el formulario digital wizard y la clasificación automática en tiempo real, no hay manera de medir la Tasa de Adopción de Protocolo ni comprobar si la tecnología agiliza la intervención clínica.
-- **3. ¿El usuario dejaría de percibir valor sin ella?**
-  - **Totalmente:** Si eliminamos el cálculo de riesgo o el Copiloto IA, la aplicación se convertiría en un formulario estático de Google Forms sin inteligencia, sin triage y sin impacto preventivo.
+### DIAPOSITIVA 8: PARTE 8 — Datos Utilizados y Calidad (Semana 12 Colab)
+- **Objetivo de la rúbrica:** Origen, variables, cantidad de registros y problemas de calidad detectados.
+- **Qué decir al jurado:**
+  > *"Trabajamos con una base de datos relacional en PostgreSQL 17 conformada por **17 tablas y 239 columnas**, con **3,465 encuestas procesadas** y un censo histórico de 279 fallecimientos.*
+  >
+  > *En la **Semana 12 en Google Colab**, aplicamos la regla de oro:* **Antes de limpiar datos de salud mental, debemos diagnosticarlos clínicamente.**
+  >
+  > *Detectamos un problema clásico de calidad: valores extremos en el PHQ-9 (puntaje 27). Un estadístico tradicional eliminaría el dato por ser outlier; nuestro diagnóstico clínico determinó que un 27 representa la máxima severidad del episodio depresivo. Eliminarlo provocaría un falso negativo letal. Por ende, la técnica aplicada fue **preservar y priorizar**."*
 
 ---
 
-### DIAPOSITIVA 11: Pipeline y Diagnóstico Previo a Limpieza (Semana 12 Colab)
-- **Secuencia de Comprensión:**
-  $$\text{Problema} \longrightarrow \text{Obtención (Encuestas)} \longrightarrow \text{Comprensión Clínica} \longrightarrow \text{Preparación / ETL} \longrightarrow \text{Inferencia IA}$$
-- **La Regla de Oro aprendida en la Semana 12:** *“Antes de limpiar datos de salud mental, debemos diagnosticarlos clínicamente”*:
-  1. *Detectar y Cuantificar:* Conteo de nulos y anomalías en las 17 tablas relacionales.
-  2. *Interpretar el Significado Clínico:* En una base de datos de salud mental, un puntaje extremo de PHQ-9 de 27 puntos **no es un outlier estadístico que deba borrarse**; es un paciente en depresión severa al borde del colapso. Eliminarlo por 'ruido' sería negligencia clínica.
-  3. *Cargar e Inspeccionar:* Análisis de dispersión y correlación psicométrica con Matplotlib y Seaborn en el notebook de Google Colab (`Limpieza_Interactiva_Semana12_Colab.ipynb`).
-  4. *Seleccionar Técnica y Aplicar:* Imputación guiada por reglas clínicas e integración con Prisma.
+### DIAPOSITIVA 9: PARTE 9 — Formulación Técnica del Problema de IA
+- **Objetivo de la rúbrica:** Definir técnicamente la tarea (clasificación, NLP, IA generativa) y justificarla.
+- **Qué decir al jurado:**
+  > *"Formulamos el problema de Inteligencia Artificial mediante dos tareas técnicas:*
+  > 1. **Clasificación Multiclase Supervisada:**
+  >    - *Entrada:* Vector estructurado de 84 respuestas psicométricas.
+  >    - *Tarea:* Asignar una de 4 clases ordinales de riesgo (`bajo`, `moderado`, `alto`, `muy_alto`).
+  >    - *Salida:* Nivel de severidad y bandera de Alerta Roja.
+  > 2. **Generación Aumentada por Recuperación con Herramientas (RAG con Function Calling):**
+  >    - *Entrada:* Expediente anonimizado del paciente + consulta del médico.
+  >    - *Tarea:* Inferencia contextual, consulta a base de datos y síntesis asistencial.
+  >    - *Salida:* Informe clínico prescriptivo en lenguaje natural."*
 
 ---
 
-### DIAPOSITIVA 12: Variables de IA: Target vs Features en Nuestro MVP
-- **Variable Objetivo (Target en la Base de Datos):**
-  - Campo `nivel_riesgo` de la tabla `notificaciones` en PostgreSQL.
-  - Valores categóricos ordinales de salida:
-    - `bajo` (0 a 3 puntos)
-    - `moderado` (4 a 7 puntos)
-    - `alto` (8 a 11 puntos)
-    - `muy_alto` (12 a 23 puntos)
-- **Variables Predictoras (Features Reales en `src/lib/calculos.ts`):**
-  Las 7 variables que alimentan directamente la función de riesgo:
-  1. `phq9`: Puntaje total de depresión (0 a 4 pts) $\leftarrow$ Tabla `phq9_respuestas`
-  2. `bhs`: Puntaje total de desesperanza (0 a 4 pts) $\leftarrow$ Tabla `bhs_respuestas`
-  3. `cssrs`: Severidad de ideación suicida (0 a 5 pts) $\leftarrow$ Tabla `cssrs_respuestas`
-  4. `ideacionSuicida`: Ítem 9 directo del PHQ-9 (0 a 3 pts) $\leftarrow$ Campo `item_9`
-  5. `intentoPrevio`: Antecedente de intento autolítico (+3 pts) $\leftarrow$ Tabla `historial_suicida`
-  6. `consumoSustancias`: Consumo de alcohol o drogas (+2 pts) $\leftarrow$ Tabla `salud_fisica`
-  7. `aislamientoSocial`: Vive solo y sin red de confianza (+2 pts) $\leftarrow$ Tabla `relaciones_interpersonales`
-  - **Puntaje Compuesto:** De 0 a 23 puntos totales ponderados.
+### DIAPOSITIVA 10: PARTE 10 — Algoritmo o Modelo Utilizado (Mapeo $X \rightarrow y$)
+- **Objetivo de la rúbrica:** Justificar algoritmo, variables de entrada $X$ y variable objetivo $y$.
+- **Qué decir al jurado:**
+  > *"En `src/lib/calculos.ts` implementamos el modelo:*
+  > - **Variables de Entrada $X$ (7 factores ponderados):** PHQ-9 total (0-4 pts), BHS desesperanza (0-4 pts), C-SSRS ideación (0-5 pts), PHQ-9 ítem 9 directo (0-3 pts), Intento previo (3 pts), Sustancias (2 pts), Aislamiento social (2 pts).
+  > - **Variable Objetivo $y$:** `nivel_riesgo` (`bajo`, `moderado`, `alto`, `muy_alto`).
+  > - **Criterio de Selección:** Elegimos un **Árbol de Decisión Clínico y Reglas Deterministas** como línea base porque en salud mental la **explicabilidad médica es obligatoria**: un psicólogo no puede aceptar una recomendación de una 'caja negra' que no explique por qué el paciente tiene riesgo inminente. Además, garantiza **cero alucinaciones** y ejecución en milisegundos."*
 
 ---
 
-### DIAPOSITIVA 13: Selección y Comparativa de Algoritmos para Nuestro MVP
-- **Cuestionario Técnico de Sustentación:**
-  - *¿Qué necesita hacer el sistema?* $\rightarrow$ **Clasificar** el nivel de riesgo y **prescribir** protocolos de contención.
-  - *¿Qué datos recibe?* $\rightarrow$ 84 respuestas psicométricas tabulares + texto de consulta del médico.
-  - *¿Qué produce?* $\rightarrow$ Una categoría de riesgo clínica (`bajo`, `moderado`, `alto`, `muy_alto`) y un informe médico estructurado.
-  - *¿A qué tipo de problema corresponde?* $\rightarrow$ **Clasificación Multiclase** (Triage) y **Generación Aumentada por Recuperación (RAG / Function Calling)**.
-  - *¿Qué algoritmo básico seleccionamos?* $\rightarrow$ **Árbol de Decisión Clínico y Reglas Deterministas Ponderadas** (`calcularRiesgoGlobal`).
-    - *¿Por qué?* $\rightarrow$ Por **explicabilidad médica**, cero riesgo de alucinación matemática, ejecución en milisegundos y costo cero.
-  - *Evaluación de Modelos Complejos (Línea Base vs Ensamble):*
-    - *¿Qué limitación tiene la línea base?* $\rightarrow$ No descubre patrones no lineales ocultos en millones de combinaciones de variables contextuales.
-    - *¿Qué modelo complejo responde a esta limitación?* $\rightarrow$ **Random Forest o XGBoost** para la matriz tabular psicométrica, y **Gemini 2.5 Flash** para la inferencia holística del lenguaje natural.
-    - *¿Qué requeriría entrenar ese modelo complejo?* $\rightarrow$ Decenas de miles de historias clínicas reales etiquetadas por comités de ética médica para evitar sobreajuste (*overfitting*).
-    - *¿Con qué métrica se decide el cambio?* $\rightarrow$ Con la **Tasa de Adopción de Protocolo $\ge 70\%$** y un **Recall $\ge 95\%$** en alertas rojas.
+### DIAPOSITIVA 11: PARTE 11 — Demostración Funcional (Los 7 Pasos Obligatorios)
+- **Objetivo de la rúbrica:** Guiar la demostración en vivo mostrando el recorrido completo de una entrada nueva.
+- **Qué decir y mostrar al jurado (Guion de los 7 Pasos):**
+  > *"Ejecutaremos la demostración en vivo siguiendo la secuencia exigida por la rúbrica:*
+  > - **Paso 1 (Ingreso):** Simulamos el ingreso de un paciente nuevo en `/encuesta` con ideación activa.
+  > - **Paso 2 (Captura):** El wizard de 10 pasos captura las 84 variables.
+  > - **Paso 3 (Validación):** El backend valida rangos 0-3 y computa las sumatorias.
+  > - **Paso 4 (Ejecución IA):** El motor calcula 14 puntos (≥12) y Vertex AI procesa el expediente.
+  > - **Paso 5 (Resultado):** Se genera la categoría **'muy_alto'** y el semáforo en Código Rojo.
+  > - **Paso 6 (Presentación):** La alerta aparece en tiempo real en el panel del psicólogo y en la pantalla del paciente con el número de crisis.
+  > - **Paso 7 (Acción):** El psicólogo abre el Copiloto IA, recibe la recomendación del Plan Stanley & Brown, exporta el PDF médico y activa la derivación a la Línea 113."*
 
 ---
 
-### DIAPOSITIVA 14: Definición Formal del Algoritmo en Nuestro MVP
-- **Cuestionario Técnico Esencial:**
-  - **NUESTRO MVP NECESITA REALIZAR:**
-    - **Clasificar** el nivel de riesgo de suicidio (Bajo, Moderado, Alto, Muy Alto) y **Recomendar** protocolos de contención y contingencia clínica.
-  - **RECIBE COMO ENTRADA:**
-    - Datos estructurados del paciente (**84 respuestas psicométricas** en PHQ-9, C-SSRS, BHS, DASS-21, Rosenberg, demográficas y de soporte social) + consultas en texto libre del profesional.
-  - **DEBE PRODUCIR:**
-    - Una **categoría clínica ordinal** de severidad, una **alerta prioritaria roja/amarilla** en la base de datos y un **informe médico prescriptivo**.
-  - **ESTO CORRESPONDE A UN PROBLEMA DE:**
-    - **Clasificación Multiclase Supervisada** (Triage) y **Generación Aumentada por Recuperación (RAG / Function Calling)**.
-  - **PROPONEMOS UTILIZAR:**
-    - **Árbol de Decisión Clínico y Reglas Ponderadas** (`calcularRiesgoGlobal` en `src/lib/calculos.ts`) + **Google Cloud Vertex AI** (Gemini 2.5 Flash).
-  - **POR QUÉ:**
-    - Adecuado para datos psicométricos tabulares, **100% de explicabilidad médica** (obligatoria en salud), **cero riesgo de alucinación**, determinismo absoluto y latencia en milisegundos.
-  - **UN EJEMPLO DE FUNCIONAMIENTO REAL:**
-    > *"Si el paciente X presenta PHQ-9 = 21 (depresión severa), BHS = 16 (desesperanza crítica) e Intento Previo = Sí, el sistema suma 14 puntos (≥12), predice 'muy_alto' riesgo, enciende la Alerta Roja en el panel del psicólogo y el Copiloto IA prescribe la activación urgente del Plan de Seguridad Stanley & Brown con derivación inmediata a la Línea de Crisis."*
+### DIAPOSITIVA 12: PARTE 12 — Resultados y Valor Generado (Antes vs Después)
+- **Objetivo de la rúbrica:** Cuantificar la mejora frente al proceso tradicional (tiempo, errores, decisiones).
+- **Qué decir al jurado:**
+  > *"Los resultados del PMV son cuantificables y contrastables:*
+  > - **Tiempo de Triage:** Se redujo de 15-20 minutos de cálculo manual a **menos de 2 segundos**.
+  > - **Tiempo de Espera para Intervención:** De semanas para conseguir cita médica a **alerta roja en tiempo real**.
+  > - **Sensibilidad Diagnóstica:** **0% de falsos negativos** en pacientes con ideación suicida activa (ítem 9 de PHQ-9 ≥ 2).
+  > - **Latencia de IA:** Optimizamos la respuesta de Vertex AI de 6.0s a **1.3s** desactivando el thinking budget.
+  > - **Adopción Proyectada:** Métrica Core de Tasa de Adopción de Protocolo (TAP) $\ge 70\%$."*
 
 ---
 
-### DIAPOSITIVA 15: Conclusiones de la Sustentación de Nuestro MVP
-- **1. Impacto y Validación de Valor (Triage en &lt; 2 Segundos):**
-  - Se demostró que la autoevaluación periódica digitalizada e integrada con IA reduce el tiempo de detección de semanas a menos de 2 segundos, garantizando un 0% de falsos negativos en casos de ideación activa y alcanzando un umbral de éxito del 70% en adopción clínica.
-- **2. Arquitectura Híbrida y Ética Médica (Determinismo + Explicabilidad):**
-  - La unión de IA Simbólica determinista (cálculo de 7 factores sin error) con IA Generativa (asistencia de lenguaje natural en 1.3s) garantiza el principio ético de supervisión médica obligatoria (*Human-in-the-Loop*) y el cumplimiento estricto del estándar de dispositivos médicos ISO 14971.
-- **3. Escalabilidad Técnica Comprobada (Línea Base Lista para ML):**
-  - El sistema cuenta con 17 tablas relacionales en PostgreSQL y 3,465 encuestas procesadas, consolidando una línea base robusta y auditable para integrar ensambles de Machine Learning (Random Forest / XGBoost) en fases hospitalarias avanzadas.
----
-
-### DIAPOSITIVA 16: Cierre Institucional ("¡Muchas Gracias!")
-- **Elementos en Pantalla:**
-  - Título Gigante: *“¡Muchas Gracias!”* en tipografía elegante sobre fondo negro.
-  - Frase de cierre: *“La tecnología al servicio de la vida y la salud mental.”*
-  - Equipo: *“Cabo Verde”* · Asignatura: *Inteligencia Artificial* · Semestre VI - 2026.
-  - Recordatorio institucional de recursos de emergencia: Línea 113 opción 5 / Línea 988.
-- **Palabras de Cierre para el Expositor:**
-  > *"Agradecemos a nuestra docente Mg. Karem Mercedes Maldonado Cordova por su guía durante este ciclo académico, y quedamos atentos a sus preguntas y comentarios sobre la arquitectura e implementación de nuestro sistema MVP. Muchas gracias."*
+### DIAPOSITIVA 13: PARTE 13 — Limitaciones y Mejoras Futuras
+- **Objetivo de la rúbrica:** Reconocer restricciones con honestidad técnica y proponer mejoras concretas.
+- **Qué decir al jurado:**
+  > *"Con transparencia de ingeniería reconocemos tres aspectos:*
+  > 1. **Limitación:** El dataset inicial tiene base sintética generada con Faker para proteger la confidencialidad.  
+  >    *Mejora:* Realizar un piloto clínico en un centro de salud universitario con consentimiento informado.
+  > 2. **Limitación:** La línea base simbólica usa reglas ponderadas fijas.  
+  >    *Mejora:* Entrenar un ensamble de **Random Forest o XGBoost** cuando acumulemos más de 10,000 registros validados.
+  > 3. **Auditoría Resuelta:** Detectamos que la IA generativa filtraba nombres de código (`obtenerProtocoloClinico`). Implementamos alias clínicos institucionales en `orchestrator.ts` y sanitizador regex en el frontend."*
 
 ---
 
-## 🛡️ SIMULACRO DE PREGUNTAS DIFÍCILES DE LA PROFESORA
+### DIAPOSITIVA 14: PARTE 14 — Conclusiones (Tres Ideas Finales)
+- **Objetivo de la rúbrica:** Responder si se logró el objetivo con evidencia, qué aprendió el equipo y siguiente paso.
+- **Qué decir al jurado:**
+  > *"Concluimos nuestra sustentación con tres ideas fundamentales:*
+  > 1. **Logro del Objetivo:** El PMV demostró con evidencia funcional que la digitalización y el triage inteligente reducen el tiempo de respuesta de semanas a menos de 2 segundos con 0% de falsos negativos.
+  > 2. **Aprendizaje Técnico:** Comprobamos que la mejor arquitectura en salud es **híbrida**: la IA Simbólica aporta determinismo sin alucinaciones, y la IA Generativa aporta flexibilidad prescriptiva, siempre bajo supervisión médica (*Human-in-the-Loop*) y bajo la norma ISO 14971.
+  > 3. **Siguiente Paso:** Escalar la solución hacia un piloto controlado para medir en campo la Tasa de Adopción de Protocolo con profesionales de la salud."*
 
-### Pregunta 1: *"¿Por qué dicen que su sistema usa IA si el cálculo de riesgo es una función con `if/else`?"*
+---
+
+### DIAPOSITIVA 15: Cierre Institucional ("¡Muchas Gracias!")
+- **Texto:** *“¡Muchas Gracias! — La tecnología al servicio de la vida y la salud mental.”*
+- **Qué decir al jurado:**
+  > *"Agradecemos a nuestra docente Mg. Karem Mercedes Maldonado Cordova y quedamos a disposición del jurado para responder cualquier consulta técnica o funcional sobre el sistema. Muchas gracias."*
+
+---
+
+## 🛡️ BANCO DE PREGUNTAS DIFÍCILES DE LA PROFESORA
+
+### Pregunta 1: *"¿Por qué afirman que su sistema usa IA si el cálculo de riesgo es determinista?"*
 **Respuesta maestra:**
-> *"Profesora, esa es una excelente observación. La Inteligencia Artificial no se reduce únicamente al aprendizaje automático profundo; la **IA Simbólica basada en reglas y árboles de decisión** es la rama formal de la IA utilizada en sistemas expertos médicos donde la explicabilidad y el determinismo son un requisito de vida o muerte. Además, nuestro sistema es una **arquitectura híbrida**: la IA Simbólica realiza el cálculo del puntaje sin margen de error, y la **IA Generativa en Google Cloud Vertex AI (Gemini 2.5 Flash)** analiza el expediente del paciente, detecta factores de riesgo complejos y formula el plan de intervención clínica en lenguaje natural mediante Function Calling. Ambos componentes se complementan."*
+> *"Profesora, la IA Simbólica basada en reglas y árboles de decisión es una de las dos ramas históricas fundamentales de la Inteligencia Artificial (junto con el aprendizaje estadístico). En sistemas clínicos donde un error numérico puede costar una vida, el determinismo es una virtud, no un defecto. Además, nuestro sistema es una **arquitectura híbrida**: la IA Simbólica calcula el puntaje certero sin margen de error, y la **IA Generativa en Google Vertex AI (Gemini 2.5 Flash)** analiza el expediente del paciente, procesa el lenguaje natural y formula el plan de intervención mediante Function Calling."*
 
----
-
-### Pregunta 2: *"¿Dónde está la base de datos de su proyecto y qué estructura tiene?"*
+### Pregunta 2: *"¿Dónde está la base de datos y qué problemas de calidad detectaron en la Semana 12?"*
 **Respuesta maestra:**
-> *"Nuestra base de datos está implementada en **PostgreSQL 17** con Supabase. Cuenta con **17 tablas relacionales y 239 columnas**, estructuradas para capturar las 5 escalas clínicas validadas: `phq9_respuestas`, `cssrs_respuestas`, `bhs_respuestas`, `dass21_respuestas`, `rosenberg_respuestas`, junto con tablas de soporte contextual como `salud_fisica`, `relaciones_interpersonales`, `factores_socioeconomicos` y la tabla central `notificaciones` donde se registran las alertas de riesgo."*
+> *"Nuestra base de datos está implementada en **PostgreSQL 17** con 17 tablas y 239 columnas. En la **Semana 12 en Google Colab**, aprendimos que en salud mental no se pueden aplicar técnicas ciegas de eliminación de outliers: un paciente con puntaje 27 en PHQ-9 tiene un valor atípico estadísticamente, pero clínicamente representa un caso crítico inminente. Eliminarlo sería un error grave; por eso nuestra técnica de calidad consistió en validar la coherencia de rangos y clasificarlo con máxima prioridad."*
 
----
-
-### Pregunta 3: *"¿Cómo auditaron y corrigieron las herramientas de IA para que no expongan información del sistema?"*
+### Pregunta 3: *"¿Qué es la Tasa de Adopción de Protocolo y por qué es su Métrica Core?"*
 **Respuesta maestra:**
-> *"En las primeras pruebas, el modelo generativo filtraba el nombre de la tool `obtenerProtocoloClinico` y el nombre de la base de datos `sistema_ia_depresion`. Aplicamos una auditoría de seguridad en dos capas:
-> 1. En `src/lib/ai/orchestrator.ts` modificamos el System Prompt para prohibir explícitamente el uso de la palabra 'tool' y de nombres de código, asignando alias clínicos obligatorios como *'protocolo clínico de intervención'* y forzando la ejecución automática de la función sin preguntarle al usuario.
-> 2. En `src/components/ui/clinical-markdown.tsx` implementamos un filtro regex que sanitiza cualquier término de base de datos o función antes de renderizarlo en el navegador."*
-
----
-
-### Pregunta 4: *"¿Qué es la Tasa de Adopción de Protocolo y por qué es su Métrica Core?"*
-**Respuesta maestra:**
-> *"La Tasa de Adopción de Protocolo (TAP) es el porcentaje de alertas sugeridas por el sistema que los psicólogos deciden activar en la práctica clínica. Es nuestra Métrica Core porque en la metodología Lean Startup no buscamos medir solo la exactitud técnica en un laboratorio, sino la **validación de valor real**: si el profesional no confía en la recomendación de la IA y no la usa, el sistema no tiene valor clínico. Nuestro umbral de éxito es un $\text{TAP} \ge 70\%$."*
+> *"Es el porcentaje de alertas clínicas sugeridas por la IA que los psicólogos deciden activar en la práctica real. Es nuestra Métrica Core porque en Lean Startup medimos la **utilidad real y la confianza del usuario**: si el sistema emite recomendaciones que el profesional ignora, el proyecto no aporta valor. Nuestro criterio de éxito es una adopción $\ge 70\%$."*
