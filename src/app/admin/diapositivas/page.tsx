@@ -155,7 +155,6 @@ export default function DiapositivasPage() {
         {/* ═══════════════════════════════════════════════════════ */}
         {currentSlide === 1 && (
           <div className="w-full max-w-5xl text-center space-y-8 animate-in fade-in zoom-in-95 duration-500">
-            <span className="text-xs font-mono text-indigo-400 uppercase tracking-widest font-bold px-3 py-1 bg-indigo-950/60 rounded-full border border-indigo-800">PROBLEMA</span>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-semibold tracking-tight text-white font-curva-seria leading-tight pt-2">
               Sistema de Asistencia Clínica y Triage Preventivo en Salud Mental
             </h1>
@@ -242,11 +241,11 @@ export default function DiapositivasPage() {
               </div>
               <div className="p-5 bg-zinc-900/50 rounded-xl border border-zinc-800 text-center space-y-1">
                 <strong className="text-indigo-400 block uppercase text-xs">2. Clasificar</strong>
-                <p className="text-zinc-300">Nivel de riesgo: Bajo, Moderado, Alto o Muy Alto en &lt; 2 segundos.</p>
+                <p className="text-zinc-300">Nivel de riesgo: Bajo, Moderado, Alto o Muy Alto.</p>
               </div>
               <div className="p-5 bg-zinc-900/50 rounded-xl border border-zinc-800 text-center space-y-1">
                 <strong className="text-emerald-400 block uppercase text-xs">3. Apoyar</strong>
-                <p className="text-zinc-300">Copiloto Clínico con IA que prescribe el Plan de Seguridad en 1.3s.</p>
+                <p className="text-zinc-300">Copiloto Clínico con IA que prescribe el Plan de Seguridad.</p>
               </div>
             </div>
 
