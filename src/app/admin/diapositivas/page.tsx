@@ -175,7 +175,6 @@ export default function DiapositivasPage() {
                 ))}
               </div>
             </div>
-            <EvidenciaTag text="Portada oficial y nombre del PMV." />
           </div>
         )}
 
@@ -216,7 +215,6 @@ export default function DiapositivasPage() {
               </div>
             </div>
 
-            <EvidenciaTag text="Datos epidemiológicos de la OMS, proceso actual de consulta médica y 279 fallecimientos registrados en nuestro dataset." />
           </div>
         )}
 
@@ -233,7 +231,7 @@ export default function DiapositivasPage() {
             <div className="p-7 rounded-2xl bg-zinc-950 border border-zinc-900 font-sans-curva max-w-4xl mx-auto flex items-start gap-5">
               <Target className="w-10 h-10 text-indigo-400 shrink-0 mt-1" />
               <p className="text-base sm:text-xl text-zinc-200 leading-relaxed">
-                Desarrollar una plataforma web de triage clínico que <strong>clasifique automáticamente</strong> el nivel de riesgo de depresión y conducta suicida en <strong>menos de 2 segundos</strong>, y <strong>recomiende</strong> protocolos de intervención en tiempo real para apoyar la toma de decisiones del psicólogo.
+                Desarrollar una plataforma web de triage clínico que <strong>clasifique automáticamente</strong> el nivel de riesgo de depresión y conducta suicida, y <strong>recomiende</strong> protocolos de intervención en tiempo real para apoyar la toma de decisiones del psicólogo.
               </p>
             </div>
 
@@ -252,7 +250,6 @@ export default function DiapositivasPage() {
               </div>
             </div>
 
-            <EvidenciaTag text="Objetivo general del PMV con coherencia directa al problema identificado." />
           </div>
         )}
 
@@ -279,7 +276,6 @@ export default function DiapositivasPage() {
               </div>
             </div>
 
-            <EvidenciaTag text="Perfiles de los dos actores principales del sistema." />
           </div>
         )}
 
@@ -340,7 +336,6 @@ export default function DiapositivasPage() {
               <p className="text-zinc-200">• <strong>PMV Realmente Desarrollado:</strong> Detección temprana estandarizada + Alerta roja inmediata + Asistencia médica con IA.</p>
             </div>
 
-            <EvidenciaTag text="Esquema funcional del flujo de 4 pasos y diferenciación entre PMV real vs. solución completa." />
           </div>
         )}
 
@@ -379,7 +374,6 @@ export default function DiapositivasPage() {
               </div>
             </div>
 
-            <EvidenciaTag text="Lista breve: Incluye / No incluye. PMV acotado y verificable." />
           </div>
         )}
 
@@ -448,8 +442,6 @@ export default function DiapositivasPage() {
                   })}
                 >
                   {/* Hint clickeable */}
-                  <rect x="620" y="10" width="85" height="16" rx="8" fill="#27272a" stroke="#3f3f46" strokeWidth="1" />
-                  <text x="662" y="21" textAnchor="middle" fill="#818cf8" fontSize="7" fontWeight="600">🖱 Click: ejemplo</text>
 
                   <rect x="20" y="15" width="140" height="65" rx="12" fill="url(#aZinc)" stroke="#3f3f46" strokeWidth="2" />
                   <text x="90" y="42" textAnchor="middle" fill="white" fontSize="13" fontWeight="700">👤 Usuario</text>
@@ -528,8 +520,6 @@ export default function DiapositivasPage() {
                     ),
                   })}
                 >
-                  <rect x="620" y="118" width="85" height="16" rx="8" fill="#1e1b4b" stroke="#4f46e5" strokeWidth="1" />
-                  <text x="662" y="129" textAnchor="middle" fill="#a5b4fc" fontSize="7" fontWeight="600">🖱 Click: código</text>
 
                   <rect x="365" y="118" width="30" height="14" rx="4" fill="#4f46e5" />
                   <text x="380" y="128" textAnchor="middle" fill="white" fontSize="7" fontWeight="800">IA</text>
@@ -600,8 +590,6 @@ INSERT INTO notificaciones (
                     ),
                   })}
                 >
-                  <rect x="620" y="226" width="85" height="16" rx="8" fill="#2a0211" stroke="#e11d48" strokeWidth="1" />
-                  <text x="662" y="237" textAnchor="middle" fill="#fda4af" fontSize="7" fontWeight="600">🖱 Click: alerta</text>
 
                   <rect x="370" y="233" width="190" height="55" rx="12" fill="url(#aRose)" stroke="#e11d48" strokeWidth="2" />
                   <text x="465" y="255" textAnchor="middle" fill="white" fontSize="13" fontWeight="700">🔴 Alerta Roja</text>
@@ -648,8 +636,6 @@ Total: 17 tablas · 239 columnas`}
                   <rect x="30" y="140" width="140" height="55" rx="12" fill="url(#aZinc)" stroke="#52525b" strokeWidth="1.5" />
                   <text x="100" y="163" textAnchor="middle" fill="white" fontSize="12" fontWeight="600">🗄 PostgreSQL</text>
                   <text x="100" y="179" textAnchor="middle" fill="#71717a" fontSize="9">17 tablas · 239 cols</text>
-                  <rect x="105" y="133" width="65" height="14" rx="6" fill="#27272a" stroke="#52525b" strokeWidth="1" />
-                  <text x="137" y="143" textAnchor="middle" fill="#71717a" fontSize="7">🖱 Click</text>
                 </g>
                 <line x1="170" y1="167" x2="366" y2="162" stroke="#52525b" strokeWidth="1.5" strokeDasharray="5,4" />
 
@@ -671,7 +657,6 @@ Total: 17 tablas · 239 columnas`}
               </div>
             </div>
 
-            <EvidenciaTag text="Diagrama: Usuario → Entrada → Sistema → IA → Resultado → Acción. Se observa dónde se encuentra la IA." />
           </div>
         )}
 
@@ -741,7 +726,6 @@ Total: 17 tablas · 239 columnas`}
               <span className="text-[11px] font-mono text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-800">Click</span>
             </div>
 
-            <EvidenciaTag text="Tabla de variables, ejemplo de registros, resumen del dataset y diagnóstico de calidad." />
           </div>
         )}
 
@@ -812,7 +796,6 @@ Total: 17 tablas · 239 columnas`}
               </div>
             </div>
 
-            <EvidenciaTag text="Entrada del modelo → Tarea → Salida. Justificación de por qué cada tarea corresponde al problema." />
           </div>
         )}
 
@@ -882,7 +865,6 @@ Paciente USR_00042:
               <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800">Click</span>
             </div>
 
-            <EvidenciaTag text="Nombre del modelo, variables X, variable objetivo y, y criterio de selección justificado." />
           </div>
         )}
 
@@ -908,10 +890,9 @@ Paciente USR_00042:
             </div>
 
             <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-center text-sm text-zinc-300 font-sans-curva font-semibold">
-              🎯 El equipo ejecutará este recorrido completo en la aplicación web en tiempo real durante la sustentación.
+              🎯 El equipo ejecutará este recorrido completo en la aplicación web.
             </div>
 
-            <EvidenciaTag text="PMV ejecutándose en tiempo real con al menos 1-2 casos de prueba." />
           </div>
         )}
 
@@ -976,7 +957,6 @@ Paciente USR_00042:
               ))}
             </div>
 
-            <EvidenciaTag text="Limitación actual → Mejora propuesta. No se presenta el prototipo como producto terminado." />
           </div>
         )}
 
@@ -993,8 +973,8 @@ Paciente USR_00042:
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-sans-curva text-sm">
               <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 space-y-3">
                 <span className="text-xs font-bold uppercase text-emerald-400 block">1. Logro del Objetivo</span>
-                <p className="text-lg font-semibold text-white font-curva-seria">Triage en &lt; 2 Segundos</p>
-                <p className="text-zinc-300">El PMV demostró con evidencia funcional que reduce el tiempo de detección de semanas a segundos, con 0% de falsos negativos.</p>
+                <p className="text-lg font-semibold text-white font-curva-seria">Triage en &lt; Segundos</p>
+                <p className="text-zinc-300">El PMV demostró que reduce el tiempo de detección, con bajo porcentaje de falsos negativos.</p>
               </div>
               <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 space-y-3">
                 <span className="text-xs font-bold uppercase text-indigo-400 block">2. Aprendizaje Técnico</span>
@@ -1004,11 +984,10 @@ Paciente USR_00042:
               <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-900 space-y-3">
                 <span className="text-xs font-bold uppercase text-amber-400 block">3. Siguiente Paso</span>
                 <p className="text-lg font-semibold text-white font-curva-seria">Escalar al Piloto Clínico</p>
-                <p className="text-zinc-300">Con 17 tablas y 3,465 encuestas procesadas, la infraestructura está lista para medir la TAP con profesionales en campo.</p>
+                <p className="text-zinc-300">La infraestructura está lista puede ser mejorada y validada para poder medir la TAP con profesionales en campo.</p>
               </div>
             </div>
 
-            <EvidenciaTag text="La conclusión se basa en las pruebas y resultados. Tres ideas como máximo." />
           </div>
         )}
 
@@ -1025,8 +1004,6 @@ Paciente USR_00042:
             </p>
             <div className="pt-8 border-t border-zinc-900/80 max-w-xl mx-auto space-y-2 font-sans-curva">
               <p className="text-base sm:text-lg font-semibold tracking-wider uppercase text-zinc-300">Equipo: <span className="text-white">"Cabo Verde"</span></p>
-              <p className="text-xs sm:text-sm text-zinc-500">Inteligencia Artificial · Semestre VI - 2026</p>
-              <p className="text-xs text-zinc-600 font-mono">Línea 113 opción 5 / Línea 988</p>
             </div>
           </div>
         )}
