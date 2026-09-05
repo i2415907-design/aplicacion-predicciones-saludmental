@@ -926,7 +926,23 @@ Paciente USR_00042:
               </div>
             </div>
 
-            <EvidenciaTag text="Indicadores antes/después con resultados cuantificables y medidos." />
+            <div className="flex items-center justify-center my-6 p-4 bg-zinc-900/60 rounded-xl border border-zinc-800 text-zinc-200 text-sm md:text-base overflow-x-auto">
+  <strong className="font-bold text-emerald-400">TAP</strong>
+  <span className="mx-2 text-zinc-400">=</span>
+  <span className="text-3xl font-light text-zinc-500 mr-1">(</span>
+  <div className="inline-flex flex-col text-center px-2">
+    <span className="border-b border-zinc-400 pb-1 font-medium text-zinc-100">
+      Veces que el profesional activó el protocolo sugerido
+    </span>
+    <span className="pt-1 font-medium text-zinc-300">
+      Total de alertas de riesgo enviadas por el sistema
+    </span>
+  </div>
+  <span className="text-3xl font-light text-zinc-500 ml-1">)</span>
+  <span className="mx-2 text-zinc-400">×</span>
+  <span className="font-semibold text-emerald-400">100</span>
+</div>
+            
           </div>
         )}
 
