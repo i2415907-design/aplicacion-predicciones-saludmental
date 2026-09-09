@@ -311,7 +311,7 @@ A continuación se detalla cada término, abreviatura, tecnología y concepto pr
 #### 2. Latencia de Inferencia (Inference Latency)
 * **Significado:** Tiempo transcurrido desde que se envían las entradas numéricas o el texto al modelo de cómputo hasta que se emite la respuesta procesada final.
 * **Por qué se menciona:** Demuestra la viabilidad operativa en tiempo real frente a los tiempos manuales de consulta.
-* **Relación con el proyecto:** Scoring simbólico: **< 2 milisegundos**. Generación de plan con IA: **1.3 segundos**.
+* **Relación con el proyecto:** Scoring simbólico: **< milisegundos**. Generación de plan con IA: **1.3 segundos**.
 * **Fuente:** Hennessy, J. L., & Patterson, D. A. (2019). *Computer Architecture: A Quantitative Approach*. Morgan Kaufmann.
 
 ---
@@ -440,7 +440,7 @@ A continuación se detalla cada término, abreviatura, tecnología y concepto pr
 * **Significado:** Cuantificación objetiva del impacto del software comparando el flujo de trabajo analógico tradicional frente al flujo digital optimizado con IA.
 * **Por qué se menciona:** Demuestra con números que el PMV resolvió la brecha inicial de la Diapositiva 2.
 * **Relación con el proyecto:**
-  * **Tiempo de Triage:** De 20-30 minutos manuales a **< 2 segundos** automatizados.
+  * **Tiempo de Triage:** De 20-30 minutos manuales a **< segundos** automatizados.
   * **Falsos Negativos en Ideación Activa:** Reducidos al **0%** por la regla de bypass del Ítem 9 y C-SSRS.
   * **Latencia de Recomendación IA:** **1.3 segundos** gracias al motor Groq LPU.
   * **Encuestas procesadas sin caídas:** **3,465 registros**.
