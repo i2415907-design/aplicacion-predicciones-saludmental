@@ -78,7 +78,7 @@ export default function DiapositivasPage() {
 
   const salir = useCallback(() => {
     if (modalData) { setModalData(null); return }
-    if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => { })
     router.push('/admin')
   }, [router, modalData])
 
@@ -411,7 +411,7 @@ export default function DiapositivasPage() {
                         <p className="text-sm text-zinc-300">El paciente completa un <strong>wizard de 10 pasos</strong> que recoge las 5 escalas clínicas (PHQ-9, BHS, C-SSRS, DASS-21, Rosenberg) en su navegador web. Al finalizar, el frontend envía un JSON al API Server.</p>
                         <p className="text-xs text-zinc-500 font-bold uppercase">Ejemplo de payload JSON enviado al endpoint POST /api/encuesta:</p>
                         <pre className="p-4 bg-black rounded-xl border border-zinc-800 font-mono-code text-xs text-emerald-300 overflow-x-auto leading-relaxed">
-{`{
+                          {`{
   "datos_personales": {
     "edad": 22, "genero": "Masculino",
     "ocupacion": "Estudiante universitario"
@@ -472,7 +472,7 @@ export default function DiapositivasPage() {
                       <div className="space-y-4">
                         <p className="text-xs text-zinc-500 font-bold uppercase">Motor 1 — IA Simbólica · Código real de src/lib/calculos.ts:</p>
                         <pre className="p-4 bg-black rounded-xl border border-zinc-800 font-mono-code text-xs text-emerald-300 overflow-x-auto leading-relaxed">
-{`function calcularRiesgoGlobal(params) {
+                          {`function calcularRiesgoGlobal(params) {
   let puntajeRiesgo = 0;
 
   // X₁: PHQ-9 (depresión) — peso máximo: 5 pts
@@ -494,7 +494,7 @@ export default function DiapositivasPage() {
                         </pre>
                         <p className="text-xs text-zinc-500 font-bold uppercase">Motor 2 — IA Generativa · Tool definition (Function Calling):</p>
                         <pre className="p-4 bg-black rounded-xl border border-zinc-800 font-mono-code text-xs text-indigo-300 overflow-x-auto leading-relaxed">
-{`{
+                          {`{
   "name": "obtenerDetalleCasoPaciente",
   "description": "Obtiene el informe detallado de una
     encuesta: puntajes PHQ-9, BHS, C-SSRS, DASS-21,
@@ -550,7 +550,7 @@ export default function DiapositivasPage() {
                         <p className="text-sm text-zinc-300">Cuando el scoring produce un nivel <strong>muy_alto</strong>, el sistema inserta un registro de notificación en PostgreSQL con prioridad <strong>crítica</strong> y un SLA de 2 horas.</p>
                         <p className="text-xs text-zinc-500 font-bold uppercase">Ejemplo de registro de notificación insertado en la BD:</p>
                         <pre className="p-4 bg-black rounded-xl border border-zinc-800 font-mono-code text-xs text-rose-300 overflow-x-auto leading-relaxed">
-{`-- Tabla: notificaciones
+                          {`-- Tabla: notificaciones
 INSERT INTO notificaciones (
   encuesta_id, nivel_riesgo, prioridad_alerta,
   sla_horas, accion_requerida, factores_alarma
@@ -573,7 +573,7 @@ INSERT INTO notificaciones (
                         </pre>
                         <p className="text-xs text-zinc-500 font-bold uppercase">Acción clínica generada por el Copiloto IA:</p>
                         <pre className="p-4 bg-black rounded-xl border border-zinc-800 font-mono-code text-xs text-emerald-300 overflow-x-auto leading-relaxed">
-{`Plan de Seguridad (Stanley & Brown):
+                          {`Plan de Seguridad (Stanley & Brown):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. Señales de advertencia personales
 2. Estrategias de afrontamiento internas
@@ -612,7 +612,7 @@ INSERT INTO notificaciones (
                       <div className="space-y-4">
                         <p className="text-xs text-zinc-500 font-bold uppercase">Tablas principales del esquema:</p>
                         <pre className="p-4 bg-black rounded-xl border border-zinc-800 font-mono-code text-xs text-amber-300 overflow-x-auto leading-relaxed">
-{`Tabla                  Columnas   Función
+                          {`Tabla                  Columnas   Función
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 encuestas              12 cols    Registro maestro
 phq9_respuestas        11 cols    Escala de depresión
@@ -831,7 +831,7 @@ Total: 17 tablas · 239 columnas`}
                 subtitle: 'Código real: src/lib/calculos.ts → calcularRiesgoGlobal()',
                 content: (
                   <pre className="p-4 bg-black rounded-xl border border-zinc-800 font-mono-code text-xs text-emerald-300 overflow-x-auto leading-relaxed">
-{`// === VARIABLES DE ENTRADA X (7 factores ponderados) ===
+                    {`// === VARIABLES DE ENTRADA X (7 factores ponderados) ===
 X₁: PHQ-9 total         →  0-5 pts  (Depresión)
 X₂: BHS total           →  0-4 pts  (Desesperanza)
 X₃: C-SSRS severidad    →  0-7 pts  (Ideación/Conducta suicida)
@@ -918,31 +918,31 @@ Paciente USR_00042:
               <div className="p-6 rounded-2xl bg-zinc-950 border border-emerald-950/60 space-y-3">
                 <span className="text-xs font-bold uppercase text-emerald-400 block">Después (Con Nuestro PMV)</span>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center p-2 bg-emerald-950/20 rounded-lg border border-emerald-900/30"><span className="text-zinc-200">Tiempo de Triage</span><span className="font-bold text-emerald-300">&lt; 2 segundos</span></div>
+                  <div className="flex justify-between items-center p-2 bg-emerald-950/20 rounded-lg border border-emerald-900/30"><span className="text-zinc-200">Tiempo de Triage</span><span className="font-bold text-emerald-300">&lt;segundos</span></div>
                   <div className="flex justify-between items-center p-2 bg-emerald-950/20 rounded-lg border border-emerald-900/30"><span className="text-zinc-200">Alerta al Médico</span><span className="font-bold text-emerald-300">Tiempo real</span></div>
-                  <div className="flex justify-between items-center p-2 bg-emerald-950/20 rounded-lg border border-emerald-900/30"><span className="text-zinc-200">Falsos Negativos</span><span className="font-bold text-emerald-300">0% ideación</span></div>
+                  <div className="flex justify-between items-center p-2 bg-emerald-950/20 rounded-lg border border-emerald-900/30"><span className="text-zinc-200">Falsos Negativos</span><span className="font-bold text-emerald-300">menos de % ideación</span></div>
                   <div className="flex justify-between items-center p-2 bg-emerald-950/20 rounded-lg border border-emerald-900/30"><span className="text-zinc-200">Latencia IA</span><span className="font-bold text-emerald-300">1.3 segundos</span></div>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center justify-center my-6 p-4 bg-zinc-900/60 rounded-xl border border-zinc-800 text-zinc-200 text-sm md:text-base overflow-x-auto">
-  <strong className="font-bold text-emerald-400">TAP</strong>
-  <span className="mx-2 text-zinc-400">=</span>
-  <span className="text-3xl font-light text-zinc-500 mr-1">(</span>
-  <div className="inline-flex flex-col text-center px-2">
-    <span className="border-b border-zinc-400 pb-1 font-medium text-zinc-100">
-      Veces que el profesional activó el protocolo sugerido
-    </span>
-    <span className="pt-1 font-medium text-zinc-300">
-      Total de alertas de riesgo enviadas por el sistema
-    </span>
-  </div>
-  <span className="text-3xl font-light text-zinc-500 ml-1">)</span>
-  <span className="mx-2 text-zinc-400">×</span>
-  <span className="font-semibold text-emerald-400">100</span>
-</div>
-            
+              <strong className="font-bold text-emerald-400">TAP</strong>
+              <span className="mx-2 text-zinc-400">=</span>
+              <span className="text-3xl font-light text-zinc-500 mr-1">(</span>
+              <div className="inline-flex flex-col text-center px-2">
+                <span className="border-b border-zinc-400 pb-1 font-medium text-zinc-100">
+                  Veces que el profesional activó el protocolo sugerido
+                </span>
+                <span className="pt-1 font-medium text-zinc-300">
+                  Total de alertas de riesgo enviadas por el sistema
+                </span>
+              </div>
+              <span className="text-3xl font-light text-zinc-500 ml-1">)</span>
+              <span className="mx-2 text-zinc-400">×</span>
+              <span className="font-semibold text-emerald-400">100</span>
+            </div>
+
           </div>
         )}
 
